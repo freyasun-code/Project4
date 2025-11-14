@@ -4,11 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Project 3B: Camera Calibration and 3D Scanning</title>
+  <script>
+    // MathJax configuration, if needed for the new content
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(','\\)']],
+        displayMath: [['\\[','\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     body {
       background-color: #D8C3DD;
       font-family: Arial, sans-serif;
-      color: white;
+      color: white; /* 页面通用文字色，对于浅色背景的 section 可能会有问题 */
       margin: 0;
       padding: 0;
     }
@@ -42,9 +55,10 @@
       padding: 30px;
       margin: 40px 0;
       border-radius: 12px;
+      color: #333333; /* 修正：设置 section 内文字为深色，确保在浅色背景上可见 */
     }
     .section h2 {
-      color: #ffddff;
+      color: #ffddff; /* 标题颜色保持不变 */
       text-align: center;
     }
     .formula {
@@ -56,6 +70,7 @@
       font-size: 1.05em;
       margin: 12px 0;
       line-height: 1.5;
+      color: #000000; /* 确保公式颜色可见 */
     }
     img {
       max-width: 100%;
@@ -75,6 +90,7 @@
       margin-top: 8px;
       font-size: 16px;
       text-align: center;
+      color: #333333; /* 确保图片下方的说明文字可见 */
     }
     p {
       text-align: left;
@@ -82,12 +98,13 @@
       margin: auto;
       margin-bottom: 20px;
       font-size: 18px;
+      color: #333333; /* 确保段落文字可见 */
     }
     code {
       background: #f2f2f2;
       padding: 3px 5px;
       border-radius: 4px;
-      color: black; /* 确保代码块内的文字可见 */
+      color: #000000; /* 确保代码块内的文字可见 */
       font-family: monospace;
     }
   </style>
@@ -103,7 +120,7 @@
 
   <div class="container">
     <h1>Project 3B: Camera Calibration and 3D Scanning</h1>
-    <p style="text-align:center; font-style:italic;">Author Name</p>
+    <p style="text-align:center; font-style:italic; color: white;">Author Name</p>
 
 <div class="section" id="P00">
   <h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
