@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Project 3B: Camera Calibration and 3D Scanning</title>
-  <script>
-    // MathJax configuration, if needed for the new content
+  
+    <script>
     window.MathJax = {
       tex: {
         inlineMath: [['\\(','\\)']],
@@ -17,11 +17,12 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
   <style>
     body {
       background-color: #D8C3DD;
       font-family: Arial, sans-serif;
-      color: white; /* 页面通用文字色，对于浅色背景的 section 可能会有问题 */
+      color: white; /* 页面通用文字色，用于 h1, h2, nav 等 */
       margin: 0;
       padding: 0;
     }
@@ -55,7 +56,7 @@
       padding: 30px;
       margin: 40px 0;
       border-radius: 12px;
-      color: #333333; /* 修正：设置 section 内文字为深色，确保在浅色背景上可见 */
+      color: #333; /* 修正：确保 section 内正文为深色，可见 */
     }
     .section h2 {
       color: #ffddff; /* 标题颜色保持不变 */
@@ -70,7 +71,7 @@
       font-size: 1.05em;
       margin: 12px 0;
       line-height: 1.5;
-      color: #000000; /* 确保公式颜色可见 */
+      color: #000; /* 确保公式文字可见 */
     }
     img {
       max-width: 100%;
@@ -90,7 +91,7 @@
       margin-top: 8px;
       font-size: 16px;
       text-align: center;
-      color: #333333; /* 确保图片下方的说明文字可见 */
+      color: #333; /* 确保图片说明文字可见 */
     }
     p {
       text-align: left;
@@ -98,7 +99,7 @@
       margin: auto;
       margin-bottom: 20px;
       font-size: 18px;
-      color: #333333; /* 确保段落文字可见 */
+      color: #333; /* 确保段落文字可见 */
     }
     code {
       background: #f2f2f2;
@@ -112,10 +113,10 @@
 
 <body>
   <nav>
-    <a href="#P00">Part 0.0</a>
-    <a href="#P01">Part 0.1</a>
-    <a href="#P02">Part 0.2</a>
-    <a href="#P03">Part 0.3</a>
+        <a href="#P00">P 0.0</a>
+    <a href="#P01">P 0.1</a>
+    <a href="#P02">P 0.2</a>
+    <a href="#P03">P 0.3</a>
   </nav>
 
   <div class="container">
@@ -123,9 +124,9 @@
     <p style="text-align:center; font-style:italic; color: white;">Author Name</p>
 
 <div class="section" id="P00">
-  <h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
+  <h2>Part 0.0: Project Overview</h2>
   <p>
-    This webpage documents my project progress. The structure follows the same format I used before, including descriptions, visualizations, and implementation details.
+    This project focuses on **Camera Calibration** using ArUco markers and its application in **3D Scene Reconstruction (Scanning)**. We first estimate the camera's intrinsic parameters and distortion coefficients using multiple views of a known pattern. Then, we leverage these parameters to determine the 3D pose of objects in the scene from 2D image coordinates.
   </p>
 </div>
 
@@ -153,27 +154,76 @@
     coefficients. These calibration parameters will later be used to compute object
     pose for the 3D scan.
   </p>
+  
   <div class="row">
     <div class="img-block">
-      <img src="calibration_image_example.jpg" alt="Example Calibration Image" width="400">
-      <p>Example image showing detected ArUco markers.</p>
+      <img src="calibration-setup-image.jpg" alt="Calibration setup" width="450">
+      <p>Calibration setup with ArUco markers.</p>
+    </div>
+    <div class="img-block">
+      <img src="detected-markers-image.jpg" alt="Detected markers" width="450">
+      <p>Visualization of detected corner points.</p>
     </div>
   </div>
 </div>
 
+
 <div class="section" id="P02">
-  <h2>Part 0.2: Capturing a 3D Scan (Placeholder)</h2>
+  <h2>Part 0.2: Capturing a 3D Scan</h2>
+
   <p>
-    (Future content for the 3D scanning part will go here.)
+    To capture the 3D scan, a fixed object (e.g., a simple cube or a 3D printed model) was placed on the plane containing the ArUco markers. Multiple images were taken from different viewpoints around the object.
   </p>
+
+  <p>
+    For each image, the known ArUco marker pattern allows us to robustly determine the camera's **Extrinsic Parameters** (Rotation $\mathbf{R}$ and Translation $\mathbf{T}$) relative to the world coordinate system (the marker plane). This is achieved using the calibrated intrinsic matrix $\mathbf{K}$:
+  </p>
+
+  <div class="formula">
+    \[
+    \lambda \mathbf{x} = \mathbf{K} [\mathbf{R} | \mathbf{T}] \mathbf{X}
+    \]
+  </div>
+
+  <p>
+    where $\mathbf{x}$ is a 2D image point and $\mathbf{X}$ is a 3D world point. By projecting the known marker points and minimizing the re-projection error, we obtain the precise camera pose. These poses are essential for triangulating the 3D coordinates of points on the object.
+  </p>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="object-scan-view1.jpg" alt="3D scan view 1" width="300">
+      <p>Object View 1 with Pose determined.</p>
+    </div>
+    <div class="img-block">
+      <img src="object-scan-view2.jpg" alt="3D scan view 2" width="300">
+      <p>Object View 2 with Pose determined.</p>
+    </div>
+    <div class="img-block">
+      <img src="object-scan-view3.jpg" alt="3D scan view 3" width="300">
+      <p>Object View 3 with Pose determined.</p>
+    </div>
+  </div>
 </div>
 
 <div class="section" id="P03">
-  <h2>Part 0.3: Result Visualization (Placeholder)</h2>
+  <h2>Part 0.3: Result Visualization and Discussion</h2>
+
   <p>
-    (Future content for result visualization will go here.)
+    Using a Structure-from-Motion (SfM) or similar pipeline, the 2D correspondences across the captured images were found, and their 3D locations were triangulated using the known camera poses. This process yields a sparse 3D point cloud of the scanned object.
   </p>
+
+  <p>
+    The final visualization shows the resulting point cloud, clearly illustrating the shape of the object. While the density is limited by the number of feature correspondences, the overall structure demonstrates the effectiveness of the camera calibration and pose estimation approach.
+  </p>
+  
+  <div class="row">
+    <div class="img-block">
+      <img src="final-point-cloud-visualization.jpg" alt="Final 3D point cloud" width="600">
+      <p>The final sparse 3D point cloud of the scanned object.</p>
+    </div>
+  </div>
 </div>
+
 
   </div>
 </body>
