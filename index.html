@@ -3,26 +3,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Project 3B: Camera Calibration and 3D Scanning</title>
-  
-    <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\\(','\\)']],
-        displayMath: [['\\[','\\]']]
-      },
-      options: {
-        skipHtmlTags: ['script','noscript','style','textarea','pre','code']
-      }
-    };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  
+  <title>Project 3A: Image Warping and Mosaicing</title>
   <style>
     body {
       background-color: #D8C3DD;
       font-family: Arial, sans-serif;
-      color: white; /* 页面通用文字色，用于 h1, h2, nav 等 */
+      color: white;
       margin: 0;
       padding: 0;
     }
@@ -56,10 +42,9 @@
       padding: 30px;
       margin: 40px 0;
       border-radius: 12px;
-      color: #333; /* 修正：确保 section 内正文为深色，可见 */
     }
     .section h2 {
-      color: #ffddff; /* 标题颜色保持不变 */
+      color: #ffddff;
       text-align: center;
     }
     .formula {
@@ -71,7 +56,6 @@
       font-size: 1.05em;
       margin: 12px 0;
       line-height: 1.5;
-      color: #000; /* 确保公式文字可见 */
     }
     img {
       max-width: 100%;
@@ -91,7 +75,6 @@
       margin-top: 8px;
       font-size: 16px;
       text-align: center;
-      color: #333; /* 确保图片说明文字可见 */
     }
     p {
       text-align: left;
@@ -99,132 +82,402 @@
       margin: auto;
       margin-bottom: 20px;
       font-size: 18px;
-      color: #333; /* 确保段落文字可见 */
-    }
-    code {
-      background: #f2f2f2;
-      padding: 3px 5px;
-      border-radius: 4px;
-      color: #000000; /* 确保代码块内的文字可见 */
-      font-family: monospace;
     }
   </style>
 </head>
 
 <body>
   <nav>
-        <a href="#P00">P 0.0</a>
-    <a href="#P01">P 0.1</a>
-    <a href="#P02">P 0.2</a>
-    <a href="#P03">P 0.3</a>
+    <a href="#A1">A.1</a>
+    <a href="#A2">A.2</a>
+    <a href="#A3">A.3</a>
+    <a href="#A4">A.4</a>
+    <a href="#B1">B.1</a>
+    <a href="#B2">B.2</a>
+    <a href="#B3">B.3</a>
+    <a href="#B4">B.4</a>
   </nav>
 
   <div class="container">
-    <h1>Project 3B: Camera Calibration and 3D Scanning</h1>
-    <p style="text-align:center; font-style:italic; color: white;">Author Name</p>
+    <h1>Project 3A: Image Warping and Mosaicing</h1>
+    <p style="text-align:center; font-style:italic;">Freya Sun</p>
 
-<div class="section" id="P00">
-  <h2>Part 0.0: Project Overview</h2>
-  <p>
-    This project focuses on **Camera Calibration** using ArUco markers and its application in **3D Scene Reconstruction (Scanning)**. We first estimate the camera's intrinsic parameters and distortion coefficients using multiple views of a known pattern. Then, we leverage these parameters to determine the 3D pose of objects in the scene from 2D image coordinates.
-  </p>
+<!-- A.1 -->
+<div class="section" id="A1">
+  <h2>A.1: Shoot the Pictures</h2>
+  <p>Here are my three sets of images.</p>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="tower-left.jpg" alt="tower left" width="350">
+      <p>tower-left</p>
+    </div>
+    <div class="img-block">
+      <img src="tower-right.jpg" alt="tower right" width="350">
+      <p>tower-right</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="library-left.jpg" alt="library left" width="300">
+      <p>library-left</p>
+    </div>
+    <div class="img-block">
+      <img src="library-middle.jpg" alt="library middle" width="300">
+      <p>library-middle</p>
+    </div>
+    <div class="img-block">
+      <img src="library-right.jpg" alt="library right" width="300">
+      <p>library-right</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="street-left.jpg" alt="street left" width="300">
+      <p>street-left</p>
+    </div>
+    <div class="img-block">
+      <img src="street-middle.jpg" alt="street middle" width="300">
+      <p>street-middle</p>
+    </div>
+    <div class="img-block">
+      <img src="street-right.jpg" alt="street right" width="300">
+      <p>street-right</p>
+    </div>
+  </div>
 </div>
 
-<div class="section" id="P01">
-  <h2>Part 0.1: Calibrating My Camera</h2>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>A.2: Recovering the Homography</title>
+
+  <!-- MathJax configuration -->
+
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(','\\)']],
+      displayMath: [['\\[','\\]']]
+    },
+    options: {
+      skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+    }
+  };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Basic layout styles -->
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      line-height: 1.6;
+      background-color: #fafafa;
+      color: #333;
+    }
+    h2, h3, h4 {
+      color: #003366;
+    }
+    .section {
+      margin-bottom: 60px;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      margin-top: 25px;
+    }
+    .img-block {
+      text-align: center;
+    }
+    img {
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    pre {
+      background: #f4f4f4;
+      border-radius: 6px;
+      padding: 14px;
+      font-family: Consolas, monospace;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="section" id="A2">
+  <h2>A.2: Recovering the Homography</h2>
+
+  <h3>computeH(im1_pts, im2_pts) function:</h3>
+
+  <div style="text-align:center;">
+    <pre style="display:inline-block; text-align:left;">
+def computeH(src_pts, dst_pts):
+    assert src_pts.shape == dst_pts.shape and src_pts.shape[0] >= 4
+    num_points = src_pts.shape[0]
+    A = []
+    b = []
+    for i in range(num_points):
+        x, y = src_pts[i, :]
+        u, v = dst_pts[i, :]
+        A.append([x, y, 1, 0, 0, 0, -u*x, -u*y])
+        A.append([0, 0, 0, x, y, 1, -v*x, -v*y])
+        b.append(u)
+        b.append(v)
+    A = np.array(A)
+    b = np.array(b)
+    h, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+    H = np.append(h, 1).reshape(3, 3)
+    return H
+    </pre>
+  </div>
+
+  <h3>Recovered Homography Matrix H:</h3>
+
+  <div style="text-align:center;">
+    <pre style="display:inline-block; text-align:center;">
+      [  1.82  -0.05 -888.37 ]
+      [  0.36   1.50 -404.83 ]
+      [  0.00   0.00    1.00 ]
+    </pre>
+  </div>
+
+  <h3>System of Equations:</h3>
+
   <p>
+    To align one image to another, we need to find a <strong>homography matrix</strong> \( H \) that maps a point 
+    \((x, y)\) in the first image to its corresponding point \((u, v)\) in the second image:
+  </p>
+
+  <div style="text-align:center;">
+    \[
+    \lambda
+    \begin{bmatrix}
+    u \\ v \\ 1
+    \end{bmatrix}
+    =
+    H
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    \]
+  </div>
+
+  <p>where \(\lambda\) is an arbitrary scale factor and \(H\) has 8 degrees of freedom (we set the 9th element to 1).</p>
+
+  <h4>Setting up the Linear System</h4>
+
+  <div style="text-align:center;">
+    \[
+    u = \frac{h_1 x + h_2 y + h_3}{h_7 x + h_8 y + 1}, \qquad
+    v = \frac{h_4 x + h_5 y + h_6}{h_7 x + h_8 y + 1}
+    \]
+  </div>
+
+  <p>
+    Multiplying through by the denominator and rearranging gives two linear equations per correspondence:
+  </p>
+
+  <div style="text-align:center;">
+    \[
+    \begin{cases}
+    h_1 x + h_2 y + h_3 - u(h_7 x + h_8 y) = u, \\
+    h_4 x + h_5 y + h_6 - v(h_7 x + h_8 y) = v.
+    \end{cases}
+    \]
+  </div>
+
+  <p>
+    Written in matrix form (two rows per correspondence):
+  </p>
+
+  <div style="text-align:center;">
+    \[
+    \begin{bmatrix}
+    x & y & 1 & 0 & 0 & 0 & -u x & -u y \\
+    0 & 0 & 0 & x & y & 1 & -v x & -v y
+    \end{bmatrix}
+    \begin{bmatrix}
+    h_1 \\ h_2 \\ h_3 \\ h_4 \\ h_5 \\ h_6 \\ h_7 \\ h_8
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    u \\ v
+    \end{bmatrix}
+    \]
+  </div>
+
+  <h4>Solving</h4>
+
+  <p>
+    With \(N\) correspondences we have \(2N\) equations, which we can solve via least squares:
+  </p>
+
+  <div style="text-align:center;">
+    \[
+    h = \operatorname*{argmin}_h \|A h - b\|^2
+    \]
+  </div>
+
+  <p style="text-align:center; font-style:italic;">
+    The final 3×3 homography matrix is formed by appending 1 to complete \( H \):
+  </p>
+
+  <div style="text-align:center;">
+    \[
+    H =
+    \begin{bmatrix}
+    h_1 & h_2 & h_3 \\
+    h_4 & h_5 & h_6 \\
+    h_7 & h_8 & 1
+    \end{bmatrix}
+    \]
+  </div>
+
+  <h3>Correspondences Visualized on the Images:</h3>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="im1_points.jpg" alt="image 1 correspondences" width="420">
+      <p>Image 1 (Left)</p>
+    </div>
+    <div class="img-block">
+      <img src="im2_points.jpg" alt="image 2 correspondences" width="420">
+      <p>Image 2 (Right)</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+
+
+<!-- A.3 -->
+
+<div class="section" id="A3">
+  <h2>A.3: Warp the Images</h2>
+
+  <p>
+    After computing the homography matrix \( H \), we can use it to warp an image into the reference frame of another. 
+    To do this, we implemented two functions:
+  </p>
+
+  <div style="text-align:center;">
+    <pre style="display:inline-block; text-align:left;">
+imwarped_nn = warpImageNearestNeighbor(im, H)
+imwarped_bil = warpImageBilinear(im, H)
+    </pre>
+  </div>
+
+  <p>
+    We use <strong>inverse warping</strong> to avoid holes in the output image. 
+    For each pixel in the output, its position is mapped backward using \( H^{-1} \) 
+    to find the corresponding coordinates in the input image.
+  </p>
+
+  <p>
+    Two interpolation methods were implemented from scratch:
+  </p>
+
+  <ul>
+    <li><strong>Nearest Neighbor Interpolation:</strong> Each output pixel takes the value of the closest input pixel.</li>
+    <li><strong>Bilinear Interpolation:</strong> Each output pixel is computed as a weighted average of its four neighboring input pixels.</li>
+  </ul>
+
+  <h3>Results and Discussion</h3>
+
+  <p>
+    The <em>Nearest Neighbor</em> interpolation ran faster 
+    (<strong>1.46 seconds</strong>), but produced visible jagged edges along diagonal lines and object boundaries.  
+    The <em>Bilinear</em> interpolation took longer (<strong>2.76 seconds</strong>), 
+    yet yielded smoother transitions and overall better visual quality.
+  </p>
+
+  <p>
+    Both methods successfully warped the images using inverse mapping, and we applied them for <strong>rectification</strong>. 
+    For example, by selecting four corners of a rectangular region (such as a poster or a laptop screen) and 
+    defining a perfect rectangle as the target coordinates, 
+    the warped image was corrected so that the originally distorted rectangle appears truly rectangular.
+  </p>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="macbook.jpg" alt="original macbook" width="300">
+      <p>Original Image</p>
+    </div>
+    <div class="img-block">
+      <img src="macbook_nearest_neighbor.jpg" alt="nearest neighbor" width="300">
+      <p>Nearest Neighbor Result</p>
+    </div>
+    <div class="img-block">
+      <img src="macbook_bilinear.jpg" alt="bilinear" width="300">
+      <p>Bilinear Result</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="img-block">
+      <img src="book.jpg" alt="original book" width="300">
+      <p>Original Image</p>
+    </div>
+    <div class="img-block">
+      <img src="book_nearest_neighbor.jpg" alt="book nearest neighbor" width="300">
+      <p>Nearest Neighbor Result</p>
+    </div>
+    <div class="img-block">
+      <img src="book_bilinear.jpg" alt="book bilinear" width="300">
+      <p>Bilinear Result</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- =========================== -->
+<!-- Part 0.0 -->
+<!-- =========================== -->
+
+<h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
+
+<h2>Part 0.1: Calibrating My Camera</h2>
+
+<p>
     Following the assignment instructions, I first captured a set of calibration images
     containing multiple ArUco markers. I printed the calibration tag sheet and took
     around 40 images using my phone camera, keeping the zoom fixed while varying the
     viewing angle and distance. Phone cameras work well for this task since their images
     are already mostly undistorted.
-  </p>
+</p>
 
-  <p>
+<p>
     In my calibration script, I looped through all captured images and used OpenCV’s
     ArUco detector to locate the markers. For each detected tag, I extracted the 2D
     corner coordinates. Since the real-world physical size of each tag is known, I
     defined the 3D corner points accordingly (e.g., a 2cm × 2cm square mapped to
-    four 3D points lying on the $z=0$ plane).
-  </p>
+    four 3D points lying on the z=0 plane).
+</p>
 
-  <p>
+<p>
     After collecting all 2D–3D correspondences from all images, I used
     <code>cv2.calibrateCamera()</code> to estimate my camera intrinsics and distortion
     coefficients. These calibration parameters will later be used to compute object
     pose for the 3D scan.
-  </p>
-  
-  <div class="row">
-    <div class="img-block">
-      <img src="calibration-setup-image.jpg" alt="Calibration setup" width="450">
-      <p>Calibration setup with ArUco markers.</p>
-    </div>
-    <div class="img-block">
-      <img src="detected-markers-image.jpg" alt="Detected markers" width="450">
-      <p>Visualization of detected corner points.</p>
-    </div>
-  </div>
-</div>
+</p>
+
+<hr>
 
 
-<div class="section" id="P02">
-  <h2>Part 0.2: Capturing a 3D Scan</h2>
-
-  <p>
-    To capture the 3D scan, a fixed object (e.g., a simple cube or a 3D printed model) was placed on the plane containing the ArUco markers. Multiple images were taken from different viewpoints around the object.
-  </p>
-
-  <p>
-    For each image, the known ArUco marker pattern allows us to robustly determine the camera's **Extrinsic Parameters** (Rotation $\mathbf{R}$ and Translation $\mathbf{T}$) relative to the world coordinate system (the marker plane). This is achieved using the calibrated intrinsic matrix $\mathbf{K}$:
-  </p>
-
-  <div class="formula">
-    \[
-    \lambda \mathbf{x} = \mathbf{K} [\mathbf{R} | \mathbf{T}] \mathbf{X}
-    \]
-  </div>
-
-  <p>
-    where $\mathbf{x}$ is a 2D image point and $\mathbf{X}$ is a 3D world point. By projecting the known marker points and minimizing the re-projection error, we obtain the precise camera pose. These poses are essential for triangulating the 3D coordinates of points on the object.
-  </p>
-
-  <div class="row">
-    <div class="img-block">
-      <img src="object-scan-view1.jpg" alt="3D scan view 1" width="300">
-      <p>Object View 1 with Pose determined.</p>
-    </div>
-    <div class="img-block">
-      <img src="object-scan-view2.jpg" alt="3D scan view 2" width="300">
-      <p>Object View 2 with Pose determined.</p>
-    </div>
-    <div class="img-block">
-      <img src="object-scan-view3.jpg" alt="3D scan view 3" width="300">
-      <p>Object View 3 with Pose determined.</p>
-    </div>
-  </div>
-</div>
-
-<div class="section" id="P03">
-  <h2>Part 0.3: Result Visualization and Discussion</h2>
-
-  <p>
-    Using a Structure-from-Motion (SfM) or similar pipeline, the 2D correspondences across the captured images were found, and their 3D locations were triangulated using the known camera poses. This process yields a sparse 3D point cloud of the scanned object.
-  </p>
-
-  <p>
-    The final visualization shows the resulting point cloud, clearly illustrating the shape of the object. While the density is limited by the number of feature correspondences, the overall structure demonstrates the effectiveness of the camera calibration and pose estimation approach.
-  </p>
-  
-  <div class="row">
-    <div class="img-block">
-      <img src="final-point-cloud-visualization.jpg" alt="Final 3D point cloud" width="600">
-      <p>The final sparse 3D point cloud of the scanned object.</p>
-    </div>
-  </div>
-</div>
-
-
-  </div>
 </body>
 </html>
