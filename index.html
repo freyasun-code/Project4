@@ -1,135 +1,163 @@
 <!DOCTYPE html>
+
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Project Webpage</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-      line-height: 1.6;
-    }
-
-    .container {
-      width: 80%;
-      margin: 40px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #ddd;
-    }
-
-    h1, h2 {
-      color: #333;
-      text-align: left;
-      margin-top: 40px;
-    }
-
-    p, ul, li, ol {
-      color: #444;
-      font-size: 16px;
-    }
-
-    img {
-      display: block;
-      margin: 20px auto;
-      max-width: 90%;
-      border-radius: 6px;
-    }
-
-    hr {
-      margin: 40px 0;
-      border: none;
-      border-top: 1px solid #ccc;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Project 3B: Camera Calibration and 3D Scanning</title>
+  <style>
+    body {
+      background-color: #D8C3DD;
+      font-family: Arial, sans-serif;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav a {
+      color: #ffddff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      width: 90%;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .section {
+      background-color: #D7D3EB; /* 固定浅紫灰色，不透明 */
+      padding: 30px;
+      margin: 40px 0;
+      border-radius: 12px;
+    }
+    .section h2 {
+      color: #ffddff;
+      text-align: center;
+    }
+    .formula {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-style: italic;
+      font-size: 1.05em;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .img-block {
+      text-align: center;
+    }
+    .img-block p {
+      margin-top: 8px;
+      font-size: 16px;
+      text-align: center;
+    }
+    p {
+      text-align: left;
+      max-width: 1000px;
+      margin: auto;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    code {
+      background: #f2f2f2;
+      padding: 3px 5px;
+      border-radius: 4px;
+      color: black; /* 确保代码块内的文字可见 */
+      font-family: monospace;
+    }
+  </style>
 </head>
 
 <body>
+  <nav>
+    <a href="#P00">Part 0.0</a>
+    <a href="#P01">Part 0.1</a>
+    <a href="#P02">Part 0.2</a>
+    <a href="#P03">Part 0.3</a>
+  </nav>
 
-  <div class="container">
+  <div class="container">
+    <h1>Project 3B: Camera Calibration and 3D Scanning</h1>
+    <p style="text-align:center; font-style:italic;">Author Name</p>
 
-    <!-- ======================================================= -->
-    <!-- A.1: Homographies -->
-    <!-- ======================================================= -->
-    <h2>A.1: Homographies</h2>
+<div class="section" id="P00">
+  <h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
+  <p>
+    This webpage documents my project progress. The structure follows the same format I used before, including descriptions, visualizations, and implementation details.
+  </p>
+</div>
 
-    <p>
-      In this part, I implemented homography estimation using manually selected point correspondences.
-      Four pairs of matching points are used to solve for the homography matrix
-      using the linear DLT algorithm.
-    </p>
+<div class="section" id="P01">
+  <h2>Part 0.1: Calibrating My Camera</h2>
+  <p>
+    Following the assignment instructions, I first captured a set of calibration images
+    containing multiple ArUco markers. I printed the calibration tag sheet and took
+    around 40 images using my phone camera, keeping the zoom fixed while varying the
+    viewing angle and distance. Phone cameras work well for this task since their images
+    are already mostly undistorted.
+  </p>
 
-    <h3>Rectification Example</h3>
-    <p>I selected four points on a rectangular surface in the image and computed the homography to warp it into a fronto-parallel view.</p>
-    <img src="a1_rectify_before.png">
-    <img src="a1_rectify_after.png">
+  <p>
+    In my calibration script, I looped through all captured images and used OpenCV’s
+    ArUco detector to locate the markers. For each detected tag, I extracted the 2D
+    corner coordinates. Since the real-world physical size of each tag is known, I
+    defined the 3D corner points accordingly (e.g., a 2cm × 2cm square mapped to
+    four 3D points lying on the $z=0$ plane).
+  </p>
 
-    <hr>
+  <p>
+    After collecting all 2D–3D correspondences from all images, I used
+    <code>cv2.calibrateCamera()</code> to estimate my camera intrinsics and distortion
+    coefficients. These calibration parameters will later be used to compute object
+    pose for the 3D scan.
+  </p>
+  <div class="row">
+    <div class="img-block">
+      <img src="calibration_image_example.jpg" alt="Example Calibration Image" width="400">
+      <p>Example image showing detected ArUco markers.</p>
+    </div>
+  </div>
+</div>
 
-    <!-- ======================================================= -->
-    <!-- A.2: Recovering the Homography -->
-    <!-- ======================================================= -->
-    <h2>A.2: Recovering the Homography</h2>
+<div class="section" id="P02">
+  <h2>Part 0.2: Capturing a 3D Scan (Placeholder)</h2>
+  <p>
+    (Future content for the 3D scanning part will go here.)
+  </p>
+</div>
 
-    <p>
-      In this section, I computed homographies for image mosaicing. I selected 4–6 point correspondences manually
-      between the two images and solved for the homography that maps one image into the coordinate frame of the other.
-    </p>
+<div class="section" id="P03">
+  <h2>Part 0.3: Result Visualization (Placeholder)</h2>
+  <p>
+    (Future content for result visualization will go here.)
+  </p>
+</div>
 
-    <img src="a2_points.png">
-    <img src="a2_mosaic.png">
-
-    <hr>
-
-    <!-- ======================================================= -->
-    <!-- Part 0.1: Calibrating My Camera -->
-    <!-- ======================================================= -->
-    <h2>Part 0.1: Calibrating My Camera</h2>
-
-    <p>
-      I printed the provided calibration ArUco tag sheet and captured around 40 images using my phone camera,
-      keeping the zoom fixed while varying angles and distances. This gives OpenCV enough diverse views 
-      for accurate calibration.
-    </p>
-
-    <p>
-      I used OpenCV’s ArUco detector to locate tag corners in each image. The physical size of the tag is known,
-      so I assigned corresponding 3D corner coordinates on the z=0 plane. After collecting all 2D–3D correspondences,
-      I used <code>cv2.calibrateCamera()</code> to compute intrinsics and distortion parameters.
-    </p>
-
-    <img src="placeholder_setup.png">
-
-    <hr>
-
-    <!-- ======================================================= -->
-    <!-- Part 0.2: Capturing the 3D Scan -->
-    <!-- ======================================================= -->
-    <h2>Part 0.2: Capturing a 3D Object Scan</h2>
-
-    <p>
-      After calibration, I printed a single ArUco tag and placed it next to my object on a table. 
-      I captured ~40 images from different viewpoints, keeping the same camera device and zoom level.
-      I avoided blurry or over-exposed frames and kept a roughly constant distance so the object 
-      occupied ~50% of the frame.
-    </p>
-
-    <p>
-      Before pose estimation, I uniformly downsampled all images for efficiency. 
-      I kept the aspect ratio unchanged and displayed the downsampled images to ensure the orientation
-      and dimensions were correct. As instructed, I did not perform undistortion or cropping.
-    </p>
-
-    <img src="placeholder_dataflow.png">
-
-    <hr>
-
-  </div> <!-- container -->
-
+  </div>
 </body>
 </html>
