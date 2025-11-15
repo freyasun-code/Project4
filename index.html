@@ -75,7 +75,7 @@
       text-align: center;
     }
     .img-block img {
-      width: 450px; /* 放大图片 */
+      width: 400px; /* 放大图片 */
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.08);
     }
@@ -245,6 +245,95 @@
       </p>
     </div>
 
+<!-- =========================== -->
+<!-- Part 1 -->
+<!-- =========================== -->
+<div class="section" id="part1">
+  <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+
+  <p>
+    Before moving to a full 3D Neural Radiance Field (NeRF), this section uses a
+    <b>2D Neural Field</b> to build intuition. In the 2D case there is no notion of radiance or
+    volume density, so NeRF simplifies into a function that maps a 2D pixel coordinate
+    <i>(x, y)</i> to an RGB color <i>(r, g, b)</i>. The goal is to learn this function using a
+    small MLP with positional encoding.
+  </p>
+
+  <p>
+    I followed the assignment instructions and implemented the following components:
+  </p>
+
+  <p>
+    <b>1. Positional Encoding (PE)</b><br>
+    I applied sinusoidal positional encoding to each 2D coordinate, following the formulation
+    from the NeRF paper. With a maximum frequency level of <i>L = 10</i>, the original
+    2D input was expanded to a 42-dimensional vector. High-frequency PE allows the network
+    to reproduce sharp edges and fine structures in the target image.
+  </p>
+
+  <p>
+    <b>2. Multilayer Perceptron (MLP)</b><br>
+    I implemented an MLP that takes the encoded coordinates as input and outputs a
+    3-dimensional RGB value. The network ends with a <code>Sigmoid</code> layer to ensure that the
+    predicted colors fall within <i>[0, 1]</i>. The input image was also normalized to this range
+    for supervision.
+  </p>
+
+  <p>
+    <b>3. Dataloader with Random Pixel Sampling</b><br>
+    To avoid GPU memory issues when training on high-resolution images, I wrote a dataloader
+    that randomly samples <i>10,000</i> pixels every iteration. The dataloader returns normalized
+    pixel coordinates <i>(x / W, y / H)</i> and their corresponding RGB values.
+  </p>
+
+  <p>
+    <b>4. Loss Function, Optimizer, and Metrics</b><br>
+    The network was trained using <code>MSELoss</code> between predicted and ground-truth colors.
+    I used the Adam optimizer with a learning rate of <code>1e-2</code> and trained for
+    1000–3000 iterations. Reconstruction quality was evaluated using the Peak
+    Signal-to-Noise Ratio (PSNR), computed from the MSE.
+  </p>
+
+  <p>
+    <b>5. Hyperparameter Tuning</b><br>
+    I experimented with different MLP widths and different PE frequency levels to see
+    how they affect convergence and reconstruction sharpness. Below are the results after
+    200, 800, 1400, and 2000 training iterations.
+  </p>
+
+  <hr>
+
+  <!-- Image row (4 images) -->
+  <div style="
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 20px;
+  ">
+    <div style="text-align: center;">
+      <img src="fox200.png" width="300">
+      <p style="margin-top: 8px;">Iteration 200</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="fox800.png" width="300">
+      <p style="margin-top: 8px;">Iteration 800</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="fox1400.png" width="300">
+      <p style="margin-top: 8px;">Iteration 1400</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="fox2000.png" width="300">
+      <p style="margin-top: 8px;">Iteration 2000</p>
+    </div>
+  </div>
+
+</div>
+
+    
   </div>
 </body>
 </html>
