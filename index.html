@@ -597,7 +597,86 @@
   </div>
 </div>
 
-    
+ <!-- =========================== -->
+<!-- Part 2.5 -->
+<!-- =========================== -->
+<div class="section" id="part2-5">
+  <h2>Part 2.5: Volume Rendering</h2>
+
+  <p>
+    In this part, I implemented the <b>volume rendering</b> equation for NeRF. The core idea
+    is that along each ray, the color is computed by accumulating the contributions of all
+    samples weighted by their density and transmittance. In continuous form:
+  </p>
+
+  <p style="text-align: center;">
+    \( C(\mathbf{r}) = \int_{t_n}^{t_f} T(t) \, \sigma(\mathbf{r}(t)) \, \mathbf{c}(\mathbf{r}(t), \mathbf{d}) \, dt, \quad
+    \text{where } T(t) = \exp\Big(-\int_{t_n}^t \sigma(\mathbf{r}(s)) ds\Big) \)
+  </p>
+
+  <p>
+    For computation, I used the discrete approximation:
+  </p>
+
+  <p style="text-align: center;">
+    \( \hat{C}(\mathbf{r}) = \sum_{i=1}^N T_i \left(1 - \exp(-\sigma_i \delta_i)\right) \mathbf{c}_i, \quad
+    T_i = \exp\Big(-\sum_{j=1}^{i-1} \sigma_j \delta_j\Big) \)
+  </p>
+
+  <p>
+    In practice, I implemented this in <b>PyTorch</b> to allow backpropagation. For each ray,
+    I first sampled points along the ray, predicted their density (\(\sigma_i\)) and color (\(\mathbf{c}_i\))
+    using the NeRF MLP, then applied the discrete volume rendering formula to get the final
+    RGB value for that ray.
+  </p>
+
+  <p>
+    I also visualized up to 100 rays and the corresponding sample points at a single training
+    step to ensure the rays correctly lie within the camera frustum.
+  </p>
+
+  <!-- Process images row -->
+  <div style="
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+  ">
+    <div style="text-align: center;">
+      <img src="lego100.png" width="160">
+      <p style="margin-top: 6px;">Iteration 100</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="lego500.png" width="160">
+      <p style="margin-top: 6px;">Iteration 500</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="lego1000.png" width="160">
+      <p style="margin-top: 6px;">Iteration 1000</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="lego1500.png" width="160">
+      <p style="margin-top: 6px;">Iteration 1500</p>
+    </div>
+
+    <div style="text-align: center;">
+      <img src="lego2000.png" width="160">
+      <p style="margin-top: 6px;">Iteration 2000</p>
+    </div>
+  </div>
+
+  <p style="margin-top: 30px;">
+    Here is the spherical renderings video of the Lego:
+  </p>
+
+  <div style="text-align: center; margin-top: 10px;">
+    <img src="goodrendered.gif" width="600">
+  </div>
+</div>
+   
     
   </div>
 </body>
