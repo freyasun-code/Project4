@@ -311,22 +311,22 @@
       margin-top: 20px;
   ">
     <div style="text-align: center;">
-      <img src="fox200.png" width="300">
+      <img src="fox200.png" width="200">
       <p style="margin-top: 8px;">Iteration 200</p>
     </div>
 
     <div style="text-align: center;">
-      <img src="fox800.png" width="300">
+      <img src="fox800.png" width="200">
       <p style="margin-top: 8px;">Iteration 800</p>
     </div>
 
     <div style="text-align: center;">
-      <img src="fox1400.png" width="300">
+      <img src="fox1400.png" width="200">
       <p style="margin-top: 8px;">Iteration 1400</p>
     </div>
 
     <div style="text-align: center;">
-      <img src="fox2000.png" width="300">
+      <img src="fox2000.png" width="200">
       <p style="margin-top: 8px;">Iteration 2000</p>
     </div>
   </div>
@@ -339,7 +339,7 @@
 <div style="
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
     margin-top: 20px;
 ">
   <div style="text-align: center;">
@@ -362,6 +362,65 @@
     <p style="margin-top: 8px;">Iteration 2000</p>
   </div>
 </div>
+<!-- =========================== -->
+<!-- Final Results / Hyperparameter Tuning -->
+<!-- =========================== -->
+<h3 style="text-align: center; margin-top: 40px;">Final Results for Different Hyperparameters</h3>
+
+<p>
+  I experimented with two choices of maximum positional encoding frequency (L) and two
+  choices of MLP width (number of hidden channels). With a high frequency L = 10 and
+  a wide network (width = 256), the network captures fine details and sharp edges very well.
+  When the width is reduced to 32 while keeping L = 10, the main structures are still preserved
+  but the output becomes slightly noisier and blurrier. Lowering the frequency to L = 2 makes
+  the network only capable of representing smooth, low-frequency patterns, and reducing
+  width to 32 further exaggerates this smoothing, making images almost piecewise planar.
+</p>
+
+<p>
+  These trends are visible in both my own image and the example fox image. Below are the
+  reconstructed results from four different hyperparameter settings, arranged in a 2×2 grid.
+</p>
+
+<!-- 2x2 image grid -->
+<div style="
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+">
+  <!-- First row -->
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="yifei2000.png" width="300">
+    <p style="margin-top: 8px;">Original / Baseline (Iteration 2000)</p>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="L10W32.png" width="300">
+    <p style="margin-top: 8px;">High PE L=10, Width=32</p>
+  </div>
+
+  <!-- Second row -->
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="L2W256.png" width="300">
+    <p style="margin-top: 8px;">Low PE L=2, Width=256</p>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img src="L2W32.png" width="300">
+    <p style="margin-top: 8px;">Low PE L=2, Width=32</p>
+  </div>
+</div>
+
+<!-- PSNR curve description -->
+<h3 style="text-align: center; margin-top: 40px;">PSNR Curve</h3>
+<p>
+  I also plotted the PSNR over training iterations for one image of my choice. The plot
+  shows how reconstruction quality improves as training progresses. Higher positional
+  encoding frequencies and wider networks converge faster and achieve higher PSNR values,
+  while lower frequencies and narrower networks saturate at lower PSNR.
+</p>
 
   
 </div>
