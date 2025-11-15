@@ -116,26 +116,20 @@
       <h2 id="part0-1">Part 0.1: Calibrating My Camera</h2>
 
       <p>
-        Following the assignment instructions, I first captured a set of calibration images
-        containing multiple ArUco markers. I printed the calibration tag sheet and took
-        around 40 images using my phone camera, keeping the zoom fixed while varying the
-        viewing angle and distance. Phone cameras work well for this task since their images
-        are already mostly undistorted.
+        I first captured 33 calibration images
+        containing multiple ArUco markers, keeping the zoom fixed while varying the
+        viewing angle and distance.
       </p>
 
       <p>
-        In my calibration script, I looped through all captured images and used OpenCV’s
-        ArUco detector to locate the markers. For each detected tag, I extracted the 2D
-        corner coordinates. Since the real-world physical size of each tag is known, I
-        defined the 3D corner points accordingly (e.g., a 2cm × 2cm square mapped to
-        four 3D points lying on the z=0 plane).
+        For each ArUco tag, I defined a local 3D coordinate system on the tag plane to represent its real-world coordinates. 
+        I then iterated over all calibration images and used OpenCV’s ArUco detector to find the 2D pixel coordinates of the detected tag corners. 
+        Images where no markers were detected were skipped.
       </p>
 
       <p>
-        After collecting all 2D–3D correspondences from all images, I used
-        <code>cv2.calibrateCamera()</code> to estimate my camera intrinsics and distortion
-        coefficients. These calibration parameters will later be used to compute object
-        pose for the 3D scan.
+        After collecting all 2D–3D correspondences across the dataset, I used cv2.calibrateCamera() to estimate the camera intrinsic matrix and distortion coefficients. 
+        These calibration parameters are subsequently used to compute object poses for 3D scanning.
       </p>
 
       <hr>
