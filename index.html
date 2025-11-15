@@ -429,7 +429,38 @@
     viewing directions, are used as input to the NeRF MLP for predicting RGB and density values.
   </p>
 </div>
-    
+
+   <!-- =========================== -->
+<!-- Part 2.3 -->
+<!-- =========================== -->
+<div class="section" id="part2-3">
+  <h2>Part 2.3: Putting the Dataloading All Together</h2>
+
+  <p>
+    In this part, I implemented a dataloader that randomly samples pixels from all multi-view images.
+    For each sampled pixel, I converted its 2D coordinates into a ray with origin and direction in world
+    coordinates, and returned the corresponding RGB color. To verify that everything works correctly, I
+    visualized the rays and sample points in 3D. I also tried sampling rays from a single camera to
+    ensure that they lie inside the camera frustum and to catch any possible errors.
+  </p>
+
+  <!-- Example images -->
+  <div style="display: flex; justify-content: center; gap: 30px; margin-top: 30px;">
+    <!-- Image 1: Random 100 rays -->
+    <div style="flex: 0 0 400px; text-align: center;">
+      <img src="random_100_rays.png" alt="Random 100 Rays" width="400">
+      <p>Random 100 Rays</p>
+    </div>
+
+    <!-- Image 2: 100 rays from one camera -->
+    <div style="flex: 0 0 400px; text-align: center;">
+      <img src="single_camera_100_rays.png" alt="100 Rays from One Camera" width="400">
+      <p>100 Rays from One Camera</p>
+    </div>
+  </div>
+
+</div>
+ 
     
   </div>
 </body>
