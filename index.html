@@ -379,37 +379,33 @@
 
 <p>
   These trends are visible in both my own image and the example fox image. Below are the
-  reconstructed results from four different hyperparameter settings, arranged in a 2×2 grid.
+  reconstructed results from four different hyperparameter settings, arranged in a 2×2 grid
+  (2 images per row).
 </p>
 
-<!-- 2x2 image grid -->
-<div style="
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-">
+<!-- 2x2 image grid, 2 per row -->
+<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
+
   <!-- First row -->
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="yifei2000.png" width="300">
-    <p style="margin-top: 8px;">Original / Baseline (Iteration 2000)</p>
+  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+    <img src="yifei2000.png" width="250">
+    <p style="text-align: center; margin-top: 8px;">Original / Baseline (Iteration 2000)</p>
   </div>
 
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="L10W32.png" width="300">
-    <p style="margin-top: 8px;">High PE L=10, Width=32</p>
+  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+    <img src="L10W32.png" width="250">
+    <p style="text-align: center; margin-top: 8px;">High PE L=10, Width=32</p>
   </div>
 
   <!-- Second row -->
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="L2W256.png" width="300">
-    <p style="margin-top: 8px;">Low PE L=2, Width=256</p>
+  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+    <img src="L2W256.png" width="250">
+    <p style="text-align: center; margin-top: 8px;">Low PE L=2, Width=256</p>
   </div>
 
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img src="L2W32.png" width="300">
-    <p style="margin-top: 8px;">Low PE L=2, Width=32</p>
+  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+    <img src="L2W32.png" width="250">
+    <p style="text-align: center; margin-top: 8px;">Low PE L=2, Width=32</p>
   </div>
 </div>
 
@@ -421,6 +417,11 @@
   encoding frequencies and wider networks converge faster and achieve higher PSNR values,
   while lower frequencies and narrower networks saturate at lower PSNR.
 </p>
+
+<div style="text-align: center; margin-top: 20px;">
+  <img src="yifeipsnr_curve.png" width="500">
+  <p style="text-align: center; margin-top: 8px;">PSNR over Training Iterations</p>
+</div>
 
   
 </div>
