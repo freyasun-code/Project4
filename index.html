@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Project1: Images of the Russian Empire — Part 0</title>
+  <title>Project4: Neural Radiance Field</title>
   <style>
     body {
       background-color: #D8C3DD; /* 紫色背景（保持原来颜色） */
@@ -137,35 +137,14 @@
       <h2 id="part0-2">Part 0.2: Capturing the 3D Scan</h2>
 
       <p>
-        With camera intrinsics estimated, I proceeded to capture image data for the 3D scan.
-        I photographed the object from many viewpoints with substantial overlap (roughly 60–80%),
-        maintaining consistent exposure and diffuse lighting to avoid harsh shadows. When possible,
-        I placed the object on a simple turntable and rotated it incrementally; otherwise I walked
-        the camera around the object while keeping the object centered in the frame.
+          I took 34 pictures of the bottle from many viewpoints with substantial overlap.
+      </p>
+      
+      <p>
+          <img src="bottle1.JPG" width="300" style="margin-right: 20px;">
+          <img src="bottle2.JPG" width="300">
       </p>
 
-      <p>
-        For robust reconstruction I captured images at multiple elevation angles (top, mid, low)
-        and ensured good coverage of concave regions. I checked for motion blur and removed any
-        blurry frames. All photos were saved in a single folder and named sequentially to preserve
-        ordering.
-      </p>
-
-      <p>
-        In post-processing I undistorted each image using the previously computed distortion
-        coefficients, so the reconstruction algorithm receives geometrically-correct images.
-        I then fed the undistorted image set and the camera intrinsics into a photogrammetry
-        pipeline (e.g., COLMAP / OpenMVG + OpenMVS) to compute camera poses, sparse and dense
-        point clouds, and finally a textured mesh (PLY/OBJ). The resulting 3D model can be
-        aligned with the calibration coordinate frame so that measured 3D points correspond to
-        the real-world scale used during calibration.
-      </p>
-
-      <p>
-        This calibrated scan workflow ensures that the 3D geometry and the camera parameters are
-        mutually consistent, which is important for later steps such as precise pose estimation,
-        metric measurements, or combining multi-modal data.
-      </p>
     </div>
 
     <!-- =========================== -->
@@ -175,25 +154,16 @@
       <h2 id="part0-3">Part 0.3: Estimating Camera Pose</h2>
 
       <p>
-        With the camera intrinsics calibrated in Part 0.1, I next estimated the camera pose
-        (its 3D position and orientation) for every image in my object scan. This is a classic
-        Perspective-n-Point (PnP) problem: given several known 3D points and their 2D projections,
-        we solve for the camera's extrinsic parameters.
-      </p>
-
-      <p>
-        In my case, each scan image contains a single ArUco tag placed next to the object.
-        For every image, I used OpenCV’s ArUco detector to obtain the 2D pixel coordinates of the
-        tag’s four corners. Since the physical size of my printed tag is known, I defined its
-        corresponding 3D corner coordinates in meters on a flat z=0 plane.
-      </p>
-
-      <p>
-        Using these 2D–3D correspondences, I called <code>cv2.solvePnP()</code> to compute the tag-to-camera
-        rotation and translation. I then converted the returned axis-angle vector to a rotation matrix 
-        via <code>cv2.Rodrigues()</code>. Since OpenCV gives the world-to-camera transform, I inverted it to
-        obtain the camera-to-world (c2w) pose matrix required for visualization and NeRF-style pipelines.
-      </p>
+      
+With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's 3D position and orientation for each image.
+        Each scan image contains a single ArUco tag placed next to the object. 
+        I used OpenCV’s ArUco detector to find the 2D pixel coordinates of the tag corners, 
+        and, knowing the tag’s physical size, defined the corresponding 3D coordinates on a flat z=0 plane. 
+        Using these 2D–3D correspondences, I applied <code>cv2.solvePnP()</code> to compute the rotation and translation of the tag relative to the camera. 
+        The resulting axis-angle vectors were converted to rotation matrices with <code>cv2.Rodrigues()</code>, 
+        and I inverted it to get the camera-to-world (c2w) poses needed for visualization and NeRF-style pipelines. 
+        After solving the extrinsics for all images, the camera poses and corresponding images are shown below.
+</p>
 
       <!-- Example images for Part 0.3 (two images, centered, larger) -->
       <div class="two-images" role="group" aria-label="Pose examples">
