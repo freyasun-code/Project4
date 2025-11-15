@@ -333,6 +333,103 @@
 
 </div>
 
+<!-- =========================== -->
+<!-- Part 2 -->
+<!-- =========================== -->
+<div class="section" id="part2">
+  <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+
+  <p>
+    In this part, we extend the neural field concept from Part 1 to a full 3D Neural Radiance Field (NeRF).
+    Instead of a single 2D image, we now have multiple images of the object from different viewpoints, along
+    with camera intrinsics and extrinsics. The goal is to represent the 3D scene and learn a continuous
+    function that maps 3D points and viewing directions to RGB colors and densities.
+  </p>
+
+  <hr>
+
+  <!-- =========================== -->
+  <!-- Part 2.1 -->
+  <!-- =========================== -->
+  <h2 id="part2-1">Part 2.1: Create Rays from Cameras</h2>
+
+  <h3>Camera to World Coordinate Conversion</h3>
+  <p>
+    The transformation between world coordinates <code>𝐗_w</code> and camera coordinates <code>𝐗_c</code>
+    can be defined using a rotation matrix <code>R</code> and a translation vector <code>t</code>:
+  </p>
+  <p style="text-align: center;">
+    $$\mathbf{X}_c = R \mathbf{X}_w + t$$
+  </p>
+  <p>
+    The combined matrix is called the world-to-camera (w2c) transformation or extrinsic matrix. Its inverse
+    gives the camera-to-world (c2w) transformation. In this session, we implement a function
+    <code>x_w = transform(c2w, x_c)</code> that converts points from camera space to world space. We verify
+    correctness using
+  </p>
+  <p style="text-align: center;">
+    $$\mathbf{x} = \text{transform}(\text{c2w}^{-1}, \text{transform}(\text{c2w}, \mathbf{x}))$$
+  </p>
+
+  <h3>Pixel to Camera Coordinate Conversion</h3>
+  <p>
+    Consider a pinhole camera with intrinsic matrix
+  </p>
+  <p style="text-align: center;">
+    $$K = \begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}$$
+  </p>
+  <p>
+    A 3D point in camera space <code>𝐗_c = [X_c, Y_c, Z_c]^T</code> can be projected to pixel coordinates <code>uv</code>:
+  </p>
+  <p style="text-align: center;">
+    $$uv = K \frac{\mathbf{X}_c}{Z_c}$$
+  </p>
+  <p>
+    We implement the inverse function <code>pixel_to_camera(K, uv, s)</code> to map a pixel coordinate back
+    to a point in camera space. Both functions support batched coordinates for efficiency.
+  </p>
+
+  <h3>Pixel to Ray</h3>
+  <p>
+    Each pixel defines a ray with origin <code>r_o</code> and direction <code>r_d</code>. The camera origin
+    in world space is given by the translation component of the <code>c2w</code> matrix. To compute the
+    ray direction, we choose a point along the ray with depth 1 in camera coordinates and transform it to
+    world coordinates. Then we normalize the vector to get <code>r_d</code>.
+  </p>
+  <p style="text-align: center; font-weight: bold; font-size: 18px;">
+    $$\mathbf{x}(t) = \mathbf{r}_o + t \mathbf{r}_d$$
+  </p>
+
+  <hr>
+
+  <!-- =========================== -->
+  <!-- Part 2.2 -->
+  <!-- =========================== -->
+  <h2 id="part2-2">Part 2.2: Sampling</h2>
+
+  <p>
+    Once rays are defined for all pixels in all views, we sample a subset of rays for training. Two options
+    exist: (1) sample a few images and then sample rays from each, or (2) flatten all pixels across all images
+    and sample globally. Each ray consists of an origin and a direction, along with its corresponding
+    RGB color from the image.
+  </p>
+
+  <h3>Sampling Points along Rays</h3>
+  <p>
+    To train NeRF, we discretize each ray into a set of 3D sample points. Uniformly sample along the ray between
+    near and far bounds, for example, <code>near=2.0</code> and <code>far=6.0</code>. To reduce overfitting, we
+    add a small random perturbation to each sample during training. The 3D coordinates for each point along the
+    ray are then given by:
+  </p>
+  <p style="text-align: center; font-weight: bold; font-size: 18px;">
+    $$\mathbf{x}(t) = \mathbf{r}_o + t \mathbf{r}_d$$
+  </p>
+  <p>
+    Here, <code>n_samples</code> can be set to 32 or 64. These 3D points along the rays, together with their
+    viewing directions, are used as input to the NeRF MLP for predicting RGB and density values.
+  </p>
+</div>
+    
     
   </div>
 </body>
