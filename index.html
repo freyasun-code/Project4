@@ -175,32 +175,32 @@
       <h2 style="margin-top:40px;">Training Results</h2>
       <p>I trained the network for 2000 iterations for each image. Initially, the model captures only a rough outline of the fox. As iterations increase, the reconstruction becomes clearer and recovers more fine-grained details. Eventually, the network produces a result that closely matches the original image.</p>
 
-      <div class="two-images">
-        <div class="img-block"><img src="fox200.png" style="width:100px;"><p>Iteration 200</p></div>
-        <div class="img-block"><img src="fox800.png" style="width:100px;"><p>Iteration 800</p></div>
-        <div class="img-block"><img src="fox1400.png" style="width:100px;"><p>Iteration 1400</p></div>
-        <div class="img-block"><img src="fox2000.png" style="width:100px;"><p>Iteration 2000</p></div>
-      </div>
+     <div class="two-images" style="gap:10px;">
+  <div class="img-block"><img src="fox200.png" style="width:170px;"><p>Iteration 200</p></div>
+  <div class="img-block"><img src="fox800.png" style="width:170px;"><p>Iteration 800</p></div>
+  <div class="img-block"><img src="fox1400.png" style="width:170px;"><p>Iteration 1400</p></div>
+  <div class="img-block"><img src="fox2000.png" style="width:170px;"><p>Iteration 2000</p></div>
+</div>
 
-      <h3 style="text-align:center; margin-top:40px;">My Own Image</h3>
-      <div class="two-images">
-        <div class="img-block"><img src="yifei200.png" style="width:100px;"><p>Iteration 200</p></div>
-        <div class="img-block"><img src="yifei800.png" style="width:100px;"><p>Iteration 800</p></div>
-        <div class="img-block"><img src="yifei1400.png" style="width:100px;"><p>Iteration 1400</p></div>
-        <div class="img-block"><img src="yifei2000.png" style="width:100px;"><p>Iteration 2000</p></div>
-      </div>
+<h3 style="text-align:center; margin-top:40px;">My Own Image</h3>
+<div class="two-images" style="gap:10px;">
+  <div class="img-block"><img src="yifei200.png" style="width:170px;"><p>Iteration 200</p></div>
+  <div class="img-block"><img src="yifei800.png" style="width:170px;"><p>Iteration 800</p></div>
+  <div class="img-block"><img src="yifei1400.png" style="width:170px;"><p>Iteration 1400</p></div>
+  <div class="img-block"><img src="yifei2000.png" style="width:170px;"><p>Iteration 2000</p></div>
+</div>
 
       <h3 style="text-align:center; margin-top:40px;">Final Results for Different Hyperparameters</h3>
       <p>I experimented with two choices of maximum positional encoding frequency (L) and two choices of MLP width. High frequency L = 10 and width = 256 captures fine details. Reducing width or frequency leads to blurrier results.</p>
 
       <div class="two-images">
-        <div class="img-block"><img src="yifei2000.png" style="width:200px;"><p>L=10, Width=256</p></div>
-        <div class="img-block"><img src="L10W32.png" style="width:200px;"><p>L=10, Width=32</p></div>
+        <div class="img-block"><img src="yifei2000.png" style="width:230px;"><p>L=10, Width=256</p></div>
+        <div class="img-block"><img src="L10W32.png" style="width:230px;"><p>L=10, Width=32</p></div>
       </div>
 
       <div class="two-images" style="margin-bottom:20px;">
-        <div class="img-block"><img src="L2W256.png" style="width:200px;"><p>L=2, Width=256</p></div>
-        <div class="img-block"><img src="L2W32.png" style="width:200px;"><p>L=2, Width=32</p></div>
+        <div class="img-block"><img src="L2W256.png" style="width:230px;"><p>L=2, Width=256</p></div>
+        <div class="img-block"><img src="L2W32.png" style="width:230px;"><p>L=2, Width=32</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">PSNR Curve</h3>
@@ -345,13 +345,14 @@
   </p>
 
   <!-- Five intermediate images in a row -->
-  <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:20px;">
-    <div class="img-block"><img src="lego100.png" style="width:100px;"><p>Iteration 100</p></div>
-    <div class="img-block"><img src="lego500.png" style="width:100px;"><p>Iteration 500</p></div>
-    <div class="img-block"><img src="lego1000.png" style="width:100px;"><p>Iteration 1000</p></div>
-    <div class="img-block"><img src="lego1500.png" style="width:100px;"><p>Iteration 1500</p></div>
-    <div class="img-block"><img src="lego2000.png" style="width:100px;"><p>Iteration 2000</p></div>
-  </div>
+<div style="display:flex; justify-content:center; flex-wrap:wrap; margin-top:20px;">
+  <div class="img-block" style="margin-right:10px;"><img src="lego100.png" style="width:170px;"><p>Iteration 100</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="lego500.png" style="width:170px;"><p>Iteration 500</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="lego1000.png" style="width:170px;"><p>Iteration 1000</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="lego1500.png" style="width:170px;"><p>Iteration 1500</p></div>
+  <div class="img-block"><img src="lego2000.png" style="width:170px;"><p>Iteration 2000</p></div>
+</div>
+
 
   <div class="two-images" style="margin-top:30px;">
     <div class="img-block"><img src="legoPSNR.png" width="350"><p>Validation PSNR Curve</p></div>
@@ -373,13 +374,14 @@
   </p>
 
   <!-- Five intermediate images in a row -->
-  <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:20px;">
-    <div class="img-block"><img src="bottle1000.png" style="width:100px;"><p>Iteration 1000</p></div>
-    <div class="img-block"><img src="bottle2000.png" style="width:100px;"><p>Iteration 2000</p></div>
-    <div class="img-block"><img src="bottle3000.png" style="width:100px;"><p>Iteration 3000</p></div>
-    <div class="img-block"><img src="bottle4000.png" style="width:100px;"><p>Iteration 4000</p></div>
-    <div class="img-block"><img src="bottle5000.png" style="width:100px;"><p>Iteration 5000 (Final)</p></div>
-  </div>
+<div style="display:flex; justify-content:center; flex-wrap:wrap; margin-top:20px;">
+  <div class="img-block" style="margin-right:10px;"><img src="bottle1000.png" style="width:170px;"><p>Iteration 1000</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="bottle2000.png" style="width:170px;"><p>Iteration 2000</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="bottle3000.png" style="width:170px;"><p>Iteration 3000</p></div>
+  <div class="img-block" style="margin-right:10px;"><img src="bottle4000.png" style="width:170px;"><p>Iteration 4000</p></div>
+  <div class="img-block"><img src="bottle5000.png" style="width:170px;"><p>Iteration 5000 (Final)</p></div>
+</div>
+
 
   <div class="two-images" style="margin-top:30px;">
     <div class="img-block"><img src="bottlepsnr.png" width="340"><p>Validation PSNR Curve</p></div>
