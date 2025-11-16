@@ -204,8 +204,8 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 <!-- =========================== -->
 <!-- Part 1 -->
 <!-- =========================== -->
-<div class="section" id="part1">
-  <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+<div class="section" id="part1" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+  <h2 style="color:#ffddff; text-align:center;">Part 1: Fit a Neural Field to a 2D Image</h2>
 
   <p>
     In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
@@ -239,47 +239,57 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
     <b>10,000</b> random pixels:
   </p>
 
-  <div style="text-align:center; margin:10px 0;">
-    <ul style="display:inline-block; text-align:left;">
-      <li>The H×W image is flattened into a 1-D array.</li>
-      <li>Random indices are selected from {0 … H·W−1}.</li>
-      <li>Each index <code>idx</code> is converted back to (x, y)</li>
-      <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
-      <li>The corresponding RGB values are retrieved for supervision.</li>
-    </ul>
-  </div>
+  <ul style="max-width:600px; margin:auto; text-align:left;">
+    <li>The H×W image is flattened into a 1-D array.</li>
+    <li>Random indices are selected from {0 … H·W−1}.</li>
+    <li>Each index <code>idx</code> is converted back to (x, y)</li>
+    <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
+    <li>The corresponding RGB values are retrieved for supervision.</li>
+  </ul>
 
-</div>
-
-  <hr>
-
+  <!-- =========================== -->
   <!-- Image row (4 images) -->
-  <div style="
-      display: flex;
-      justify-content: center;
-      gap: 25px;
-      margin-top: 20px;
-  ">
-    <div style="text-align: center;">
-      <img src="fox200.png" width="200">
-      <p style="margin-top: 8px;">Iteration 200</p>
+  <!-- =========================== -->
+  <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:30px;">
+    <div style="text-align:center;">
+      <img src="fox200.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 200</p>
     </div>
-
-    <div style="text-align: center;">
-      <img src="fox800.png" width="200">
-      <p style="margin-top: 8px;">Iteration 800</p>
+    <div style="text-align:center;">
+      <img src="fox800.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 800</p>
     </div>
-
-    <div style="text-align: center;">
-      <img src="fox1400.png" width="200">
-      <p style="margin-top: 8px;">Iteration 1400</p>
+    <div style="text-align:center;">
+      <img src="fox1400.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 1400</p>
     </div>
-
-    <div style="text-align: center;">
-      <img src="fox2000.png" width="200">
-      <p style="margin-top: 8px;">Iteration 2000</p>
+    <div style="text-align:center;">
+      <img src="fox2000.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 2000</p>
     </div>
   </div>
+
+  <!-- My own image row -->
+  <h3 style="text-align:center; margin-top:40px;">My own image</h3>
+  <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
+    <div style="text-align:center;">
+      <img src="yifei200.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 200</p>
+    </div>
+    <div style="text-align:center;">
+      <img src="yifei800.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 800</p>
+    </div>
+    <div style="text-align:center;">
+      <img src="yifei1400.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 1400</p>
+    </div>
+    <div style="text-align:center;">
+      <img src="yifei2000.png" width="200" style="display:block; margin:auto;">
+      <p style="margin-top:8px;">Iteration 2000</p>
+    </div>
+  </div>
+
 
 <!-- =========================== -->
 <!-- My own image -->
