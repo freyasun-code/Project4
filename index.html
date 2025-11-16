@@ -272,27 +272,6 @@ $$
     </div>
   </div>
 
-  <!-- My own image row -->
-  <h3 style="text-align:center; margin-top:40px;">My own image</h3>
-  <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
-    <div style="text-align:center;">
-      <img src="yifei200.png" width="200" style="display:block; margin:auto;">
-      <p style="margin-top:8px;">Iteration 200</p>
-    </div>
-    <div style="text-align:center;">
-      <img src="yifei800.png" width="200" style="display:block; margin:auto;">
-      <p style="margin-top:8px;">Iteration 800</p>
-    </div>
-    <div style="text-align:center;">
-      <img src="yifei1400.png" width="200" style="display:block; margin:auto;">
-      <p style="margin-top:8px;">Iteration 1400</p>
-    </div>
-    <div style="text-align:center;">
-      <img src="yifei2000.png" width="200" style="display:block; margin:auto;">
-      <p style="margin-top:8px;">Iteration 2000</p>
-    </div>
-  </div>
-
 
 <!-- =========================== -->
 <!-- My own image -->
@@ -503,15 +482,13 @@ $$
   <h2>Part 2.4: Neural Radiance Field</h2>
 
   <p>
-    After sampling 3D points along rays, the next step is to build the <b>Neural Radiance Field (NeRF)</b>.
+    Next step is to build the <b>Neural Radiance Field (NeRF)</b>.
     The network predicts both the <b>density</b> and <b>color</b> for each 3D point in world space.
-    Compared with the 2D neural field in Part 1, there are several key changes:
   </p>
 
   <ul>
     <li>
       <b>Input:</b> 3D world coordinates of each sample point, along with the 3D ray direction.
-      The view direction conditions the predicted color because the radiance depends on the viewing angle.
     </li>
     <li>
       <b>Output:</b> Density (σ) and color (RGB). Density is constrained to be non-negative using <code>ReLU</code>,
@@ -522,17 +499,13 @@ $$
       Coordinate PE can use a high frequency (e.g., L=10) while direction PE can use a lower frequency (e.g., L=4).
     </li>
     <li>
-      <b>Deeper MLP:</b> Since modeling a 3D scene is more challenging, a deeper and wider MLP is used to improve capacity.
-    </li>
-    <li>
       <b>Input Injection:</b> After positional encoding, the input is also concatenated to the middle of the MLP.
       This helps the network retain spatial information and improves training stability.
     </li>
   </ul>
 
   <p>
-    The network structure is illustrated below. You can start from this design and adjust depth, width, and
-    PE frequencies based on your data and computational resources.
+    The network structure is illustrated below.
   </p>
 
   <div style="text-align: center; margin-top: 20px;">
@@ -573,10 +546,6 @@ $$
     RGB value for that ray.
   </p>
 
-  <p>
-    I also visualized up to 100 rays and the corresponding sample points at a single training
-    step to ensure the rays correctly lie within the camera frustum.
-  </p>
 
   <!-- Process images row -->
   <div style="
