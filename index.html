@@ -208,32 +208,59 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 <div class="section" id="part1">
   <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
 
-  <p>
-    In the 2D case there is no notion of radiance or
-    volume density, so NeRF simplifies into a function that maps a 2D pixel coordinate
-    <i>(x, y)</i> to an RGB color <i>(r, g, b)</i>. 
-  </p>
-  <p>
-    <b>1. Positional Encoding (PE)</b><br>
-    I applied sinusoidal positional encoding to each 2D coordinate. With a maximum frequency level of <i>L = 10</i>, the original
-    2D input was expanded to a 42-dimensional vector. High-frequency PE allows the network
-    to reproduce sharp edges and fine structures in the target image.
-  </p>
+<p>
+  In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
+  <i>(x, y)</i> to RGB values. No volume rendering is involved.
+</p>
 
-  <p>
-    <b>2. Multilayer Perceptron (MLP)</b><br>
-    I implemented an MLP that takes the encoded coordinates as input and outputs a
-    3-dimensional RGB value. The network ends with a <code>Sigmoid</code> layer to ensure that the
-    predicted colors fall within <i>[0, 1]</i>. The input image was also normalized to this range
-    for supervision.
-  </p>
+<h3>1. Positional Encoding (PE)</h3>
+<p>
+  Each 2D coordinate is expanded using sinusoidal positional encoding with 
+  <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
+</p>
 
-  <p>
-    <b>3. Dataloader with Random Pixel Sampling</b><br>
-    To avoid GPU memory issues when training on high-resolution images, I wrote a dataloader
-    that randomly samples <i>10,000</i> pixels every iteration. The dataloader returns normalized
-    pixel coordinates <i>(x / W, y / H)</i> and their corresponding RGB values.
-  </p>
+<p style="margin-left:20px;">
+  PE(x) = [x, sin(2<sup>0</sup>πx), cos(2<sup>0</sup>πx), …,
+  sin(2<sup>L−1</sup>πx), cos(2<sup>L−1</sup>πx)]
+</p>
+
+<p>
+  High-frequency PE allows the network to reproduce sharp edges and fine details.
+</p>
+
+<h3>2. MLP Architecture</h3>
+<p>
+  The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations.
+  A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. 
+  The ground-truth image is also normalized to this range.
+</p>
+
+<h3>3. Random Pixel Sampling</h3>
+<p>
+  Following the strategy used in my classmate’s implementation, each training iteration samples 
+  <b>10,000</b> random pixels:
+</p>
+
+<ul>
+  <li>The H×W image is flattened into a 1-D array.</li>
+  <li>Random indices are selected from {0 … H·W−1}.</li>
+  <li>Each index <code>idx</code> is converted back to (x, y) using:</li>
+</ul>
+
+<pre style="background:#f5f5f5; padding:10px; border-radius:6px;">
+ys = idx // W
+xs = idx % W
+</pre>
+
+<ul>
+  <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
+  <li>The corresponding RGB values are retrieved for supervision.</li>
+</ul>
+
+<p>
+  This dataloader keeps memory usage low and makes training efficient even on high-resolution images.
+</p>
+
 
 
   <hr>
@@ -351,6 +378,15 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 
 <!-- PSNR curve description -->
 <h3 style="text-align: center; margin-top: 40px;">PSNR Curve</h3>
+
+<p>
+  I train the MLP using mean squared error (MSE) and the Adam optimizer (learning rate 1×10⁻²).
+  To monitor reconstruction quality, I compute the peak signal-to-noise ratio (PSNR):
+</p>
+
+<p style="margin-left:20px;">
+  PSNR = 10 · log10(1 / MSE)
+</p>
 <p>
   I also plotted the PSNR over training iterations for one image of my choice. The plot
   shows how reconstruction quality improves as training progresses. Higher positional
