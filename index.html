@@ -47,8 +47,11 @@
       text-align: center;
       margin-top: 0;
     }
+    h3 {
+      margin-top: 25px;
+    }
     p {
-      text-align: justify;
+      text-align: left;
       max-width: 1000px;
       margin: auto;
       margin-bottom: 20px;
@@ -95,6 +98,7 @@
     <a href="#part0">Part0</a>
     <a href="#part1">Part1</a>
     <a href="#part2">Part2</a>
+    <a href="#part3">Part3</a>
   </nav>
 
   <div class="container">
@@ -107,45 +111,21 @@
       <h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
 
       <h2 id="part0-1">Part 0.1: Calibrating My Camera</h2>
-      <p>
-        I first captured 33 calibration images containing multiple ArUco markers, keeping the zoom fixed while varying the viewing angle and distance.
-      </p>
-      <p>
-        For each ArUco tag, I defined a local 3D coordinate system on the tag plane to represent its real-world coordinates. 
-        I then iterated over all calibration images and used OpenCV’s ArUco detector to find the 2D pixel coordinates of the detected tag corners. 
-        Images where no markers were detected were skipped.
-      </p>
-      <p>
-        After collecting all 2D–3D correspondences across the dataset, I used cv2.calibrateCamera() to estimate the camera intrinsic matrix and distortion coefficients. 
-        These calibration parameters are subsequently used to compute object poses for 3D scanning.
-      </p>
+      <p>I first captured 33 calibration images containing multiple ArUco markers, keeping the zoom fixed while varying the viewing angle and distance.</p>
+      <p>For each ArUco tag, I defined a local 3D coordinate system on the tag plane to represent its real-world coordinates. I then iterated over all calibration images and used OpenCV’s ArUco detector to find the 2D pixel coordinates of the detected tag corners. Images where no markers were detected were skipped.</p>
+      <p>After collecting all 2D–3D correspondences across the dataset, I used cv2.calibrateCamera() to estimate the camera intrinsic matrix and distortion coefficients. These calibration parameters are subsequently used to compute object poses for 3D scanning.</p>
       <hr>
+
       <h2 id="part0-2">Part 0.2: Capturing the 3D Scan</h2>
+      <p>I took 34 pictures of the bottle from many viewpoints with substantial overlap.</p>
       <p>
-        I took 34 pictures of the bottle from many viewpoints with substantial overlap.
+        <img src="bottle1.JPG" width="250" style="margin-right: 20px;">
+        <img src="bottle2.JPG" width="250">
       </p>
-      <div class="two-images">
-        <div class="img-block">
-          <img src="bottle1.JPG" alt="Bottle Scan 1">
-          <p>Bottle Scan 1</p>
-        </div>
-        <div class="img-block">
-          <img src="bottle2.JPG" alt="Bottle Scan 2">
-          <p>Bottle Scan 2</p>
-        </div>
-      </div>
 
       <h2 id="part0-3">Part 0.3: Estimating Camera Pose</h2>
-      <p>
-        With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's 3D position and orientation for each image.
-        Each scan image contains a single ArUco tag placed next to the object. 
-        I used OpenCV’s ArUco detector to find the 2D pixel coordinates of the tag corners, 
-        and, knowing the tag’s physical size, defined the corresponding 3D coordinates on a flat z=0 plane. 
-        Using these 2D–3D correspondences, I applied <code>cv2.solvePnP()</code> to compute the rotation and translation of the tag relative to the camera. 
-        The resulting axis-angle vectors were converted to rotation matrices with <code>cv2.Rodrigues()</code>, 
-        and I inverted it to get the camera-to-world (c2w) poses needed for visualization and NeRF-style pipelines. 
-        After solving the extrinsics for all images, the camera poses and corresponding images are shown below.
-      </p>
+      <p>With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's 3D position and orientation for each image. Each scan image contains a single ArUco tag placed next to the object. I used OpenCV’s ArUco detector to find the 2D pixel coordinates of the tag corners, and, knowing the tag’s physical size, defined the corresponding 3D coordinates on a flat z=0 plane. Using these 2D–3D correspondences, I applied <code>cv2.solvePnP()</code> to compute the rotation and translation of the tag relative to the camera. The resulting axis-angle vectors were converted to rotation matrices with <code>cv2.Rodrigues()</code>, and I inverted it to get the camera-to-world (c2w) poses needed for visualization and NeRF-style pipelines. After solving the extrinsics for all images, the camera poses and corresponding images are shown below.</p>
+
       <div class="two-images">
         <div class="img-block">
           <img src="pose1.jpg" alt="Pose Visualization 1">
@@ -158,18 +138,8 @@
       </div>
 
       <h2 id="part0-4">Part 0.4: Undistorting Images and Building the Dataset</h2>
-      <p>
-        After estimating the pose for each image, I prepared the final dataset by undistorting all
-        images using the calibration parameters.
-        I used <code>cv2.undistort()</code> together with the calibrated intrinsics and distortion 
-        coefficients to obtain geometrically-correct images. Some images exhibit black borders 
-        after undistortion. I used 
-        <code>cv2.getOptimalNewCameraMatrix()</code> to compute a cropped intrinsics matrix and a valid ROI.
-      </p>
-      <p>
-        I organized all undistorted images, camera intrinsics, and camera-to-world pose matrices
-        into a structured dataset.
-      </p>
+      <p>After estimating the pose for each image, I prepared the final dataset by undistorting all images using the calibration parameters. I used <code>cv2.undistort()</code> together with the calibrated intrinsics and distortion coefficients to obtain geometrically-correct images. Some images exhibit black borders after undistortion. I used <code>cv2.getOptimalNewCameraMatrix()</code> to compute a cropped intrinsics matrix and a valid ROI.</p>
+      <p>I organized all undistorted images, camera intrinsics, and camera-to-world pose matrices into a structured dataset.</p>
     </div>
 
     <!-- =========================== -->
@@ -177,37 +147,22 @@
     <!-- =========================== -->
     <div class="section" id="part1">
       <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
-      <p>
-        In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
-        <i>(x, y)</i> to RGB values. No volume rendering is involved.
-      </p>
+      <p>In the 2D setting, the neural field learns a direct mapping from pixel coordinates <i>(x, y)</i> to RGB values. No volume rendering is involved.</p>
 
       <h3>1. Positional Encoding (PE)</h3>
-      <p>
-        Each 2D coordinate is expanded using sinusoidal positional encoding with 
-        <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
+      <p>Each 2D coordinate is expanded using sinusoidal positional encoding with <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:</p>
+      <p style="text-align:center;">
+      $$
+      \text{PE}(x) = \{ x, \ \sin(2^0 \pi x), \ \cos(2^0 \pi x), \ \dots, \ \sin(2^{L-1} \pi x), \ \cos(2^{L-1} \pi x) \}
+      $$
       </p>
-      <p style="text-align:center; margin:20px 0;">
-        $$
-        \text{PE}(x) = \{ x, \ \sin(2^0 \pi x), \ \cos(2^0 \pi x), \dots, \ \sin(2^{L-1} \pi x), \ \cos(2^{L-1} \pi x) \}
-        $$
-      </p>
-      <p>
-        High-frequency PE allows the network to reproduce sharp edges and fine details.
-      </p>
+      <p>High-frequency PE allows the network to reproduce sharp edges and fine details.</p>
 
       <h3>2. MLP Architecture</h3>
-      <p>
-        The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations.
-        A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. 
-        The ground-truth image is also normalized to this range.
-      </p>
+      <p>The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations. A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. The ground-truth image is also normalized to this range.</p>
 
       <h3>3. Random Pixel Sampling</h3>
-      <p>
-        Following the strategy used in my classmate’s implementation, each training iteration samples 
-        <b>10,000</b> random pixels:
-      </p>
+      <p>Following the strategy used in my classmate’s implementation, each training iteration samples <b>10,000</b> random pixels:</p>
       <ul style="max-width:600px; margin:auto; text-align:left;">
         <li>The H×W image is flattened into a 1-D array.</li>
         <li>Random indices are selected from {0 … H·W−1}.</li>
@@ -216,95 +171,45 @@
         <li>The corresponding RGB values are retrieved for supervision.</li>
       </ul>
 
-      <h2>Training Results</h2>
-      <p>
-        I trained the network for 2000 iterations for each image. In the beginning, the model only captures a rough outline of the fox.
-        As the number of iterations increases, the reconstruction becomes clearer and starts to recover more fine-grained details.
-        Eventually, the network produces a result that closely matches the original image.
-      </p>
+      <h2 style="margin-top:40px;">Training Results</h2>
+      <p>I trained the network for 2000 iterations for each image. Initially, the model captures only a rough outline of the fox. As iterations increase, the reconstruction becomes clearer and recovers more fine-grained details. Eventually, the network produces a result that closely matches the original image.</p>
 
-      <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:30px;">
-        <div class="img-block">
-          <img src="fox200.png" alt="Iteration 200">
-          <p>Iteration 200</p>
-        </div>
-        <div class="img-block">
-          <img src="fox800.png" alt="Iteration 800">
-          <p>Iteration 800</p>
-        </div>
-        <div class="img-block">
-          <img src="fox1400.png" alt="Iteration 1400">
-          <p>Iteration 1400</p>
-        </div>
-        <div class="img-block">
-          <img src="fox2000.png" alt="Iteration 2000">
-          <p>Iteration 2000</p>
-        </div>
+      <div class="two-images">
+        <div class="img-block"><img src="fox200.png" width="200"><p>Iteration 200</p></div>
+        <div class="img-block"><img src="fox800.png" width="200"><p>Iteration 800</p></div>
+        <div class="img-block"><img src="fox1400.png" width="200"><p>Iteration 1400</p></div>
+        <div class="img-block"><img src="fox2000.png" width="200"><p>Iteration 2000</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">My Own Image</h3>
-      <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
-        <div class="img-block">
-          <img src="yifei200.png" alt="Iteration 200">
-          <p>Iteration 200</p>
-        </div>
-        <div class="img-block">
-          <img src="yifei800.png" alt="Iteration 800">
-          <p>Iteration 800</p>
-        </div>
-        <div class="img-block">
-          <img src="yifei1400.png" alt="Iteration 1400">
-          <p>Iteration 1400</p>
-        </div>
-        <div class="img-block">
-          <img src="yifei2000.png" alt="Iteration 2000">
-          <p>Iteration 2000</p>
-        </div>
+      <div class="two-images">
+        <div class="img-block"><img src="yifei200.png" width="200"><p>Iteration 200</p></div>
+        <div class="img-block"><img src="yifei800.png" width="200"><p>Iteration 800</p></div>
+        <div class="img-block"><img src="yifei1400.png" width="200"><p>Iteration 1400</p></div>
+        <div class="img-block"><img src="yifei2000.png" width="200"><p>Iteration 2000</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">Final Results for Different Hyperparameters</h3>
-      <p>
-        I experimented with two choices of maximum positional encoding frequency (L) and two
-        choices of MLP width (number of hidden channels). With a high frequency L = 10 and
-        a wide network (width = 256), the network captures fine details and sharp edges very well.
-        When the width is reduced to 32 while keeping L = 10, the main structures are still preserved
-        but the output becomes slightly noisier and blurrier. Lowering the frequency to L = 2 makes
-        the network only capable of representing smooth, low-frequency patterns, and reducing
-        width to 32 further exaggerates this smoothing.
-      </p>
+      <p>I experimented with two choices of maximum positional encoding frequency (L) and two choices of MLP width. High frequency L = 10 and width = 256 captures fine details. Reducing width or frequency leads to blurrier results.</p>
 
-      <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:20px;">
-        <div class="img-block">
-          <img src="yifei2000.png" alt="Original Baseline">
-          <p>Original / Baseline (Iteration 2000)</p>
-        </div>
-        <div class="img-block">
-          <img src="L10W32.png" alt="High PE L=10, Width=32">
-          <p>High PE L=10, Width=32</p>
-        </div>
-        <div class="img-block">
-          <img src="L2W256.png" alt="Low PE L=2, Width=256">
-          <p>Low PE L=2, Width=256</p>
-        </div>
-        <div class="img-block">
-          <img src="L2W32.png" alt="Low PE L=2, Width=32">
-          <p>Low PE L=2, Width=32</p>
-        </div>
+      <div class="two-images">
+        <div class="img-block"><img src="yifei2000.png" width="250"><p>Original / Baseline (Iteration 2000)</p></div>
+        <div class="img-block"><img src="L10W32.png" width="250"><p>High PE L=10, Width=32</p></div>
+      </div>
+
+      <div class="two-images" style="margin-bottom:20px;">
+        <div class="img-block"><img src="L2W256.png" width="250"><p>Low PE L=2, Width=256</p></div>
+        <div class="img-block"><img src="L2W32.png" width="250"><p>Low PE L=2, Width=32</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">PSNR Curve</h3>
-      <p>
-        I train the MLP using mean squared error (MSE) at a learning rate of 1×10⁻².
-        To monitor reconstruction quality, I compute the peak signal-to-noise ratio (PSNR):
-      </p>
-      <p style="text-align:center; margin:20px 0;">
-        $$\text{PSNR} = 10 \cdot \log_{10}\left(\frac{1}{\text{MSE}}\right)$$
-      </p>
-      <div class="img-block" style="margin:auto;">
-        <img src="yifeipsnr_curve.png" width="500">
-        <p>PSNR over Training Iterations</p>
+      <p>I train the MLP using MSE with learning rate 1×10⁻². PSNR is computed as:</p>
+      <p style="text-align:center;">$$\text{PSNR} = 10 \cdot \log_{10}\left(\frac{1}{\text{MSE}}\right)$$</p>
+      <div class="two-images">
+        <div class="img-block"><img src="yifeipsnr_curve.png" width="500"><p>PSNR over Training Iterations</p></div>
       </div>
     </div>
+
 
 <!-- =========================== -->
 <!-- Part 2 -->
@@ -495,10 +400,6 @@
       <img src="bottle.gif" width="400"><p>Final Rendering (Orbit View)</p>
     </div>
   </div>
-</div>
-
-</body>
-</html>
 
 
   </div>
