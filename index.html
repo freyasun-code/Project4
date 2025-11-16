@@ -118,10 +118,11 @@
 
       <h2 id="part0-2">Part 0.2: Capturing the 3D Scan</h2>
       <p>I took 34 pictures of the bottle from many viewpoints with substantial overlap.</p>
-      <p>
-        <img src="bottle1.JPG" width="250" style="margin-right: 20px;">
-        <img src="bottle2.JPG" width="250">
-      </p>
+    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+  <img src="bottle1.JPG" width="200">
+  <img src="bottle2.JPG" width="200">
+</div>
+
 
       <h2 id="part0-3">Part 0.3: Estimating Camera Pose</h2>
       <p>With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's 3D position and orientation for each image. Each scan image contains a single ArUco tag placed next to the object. I used OpenCV’s ArUco detector to find the 2D pixel coordinates of the tag corners, and, knowing the tag’s physical size, defined the corresponding 3D coordinates on a flat z=0 plane. Using these 2D–3D correspondences, I applied <code>cv2.solvePnP()</code> to compute the rotation and translation of the tag relative to the camera. The resulting axis-angle vectors were converted to rotation matrices with <code>cv2.Rodrigues()</code>, and I inverted it to get the camera-to-world (c2w) poses needed for visualization and NeRF-style pipelines. After solving the extrinsics for all images, the camera poses and corresponding images are shown below.</p>
@@ -175,38 +176,38 @@
       <p>I trained the network for 2000 iterations for each image. Initially, the model captures only a rough outline of the fox. As iterations increase, the reconstruction becomes clearer and recovers more fine-grained details. Eventually, the network produces a result that closely matches the original image.</p>
 
       <div class="two-images">
-        <div class="img-block"><img src="fox200.png" width="200"><p>Iteration 200</p></div>
-        <div class="img-block"><img src="fox800.png" width="200"><p>Iteration 800</p></div>
-        <div class="img-block"><img src="fox1400.png" width="200"><p>Iteration 1400</p></div>
-        <div class="img-block"><img src="fox2000.png" width="200"><p>Iteration 2000</p></div>
+        <div class="img-block"><img src="fox200.png" width="100"><p>Iteration 200</p></div>
+        <div class="img-block"><img src="fox800.png" width="100"><p>Iteration 800</p></div>
+        <div class="img-block"><img src="fox1400.png" width="100"><p>Iteration 1400</p></div>
+        <div class="img-block"><img src="fox2000.png" width="100"><p>Iteration 2000</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">My Own Image</h3>
       <div class="two-images">
-        <div class="img-block"><img src="yifei200.png" width="200"><p>Iteration 200</p></div>
-        <div class="img-block"><img src="yifei800.png" width="200"><p>Iteration 800</p></div>
-        <div class="img-block"><img src="yifei1400.png" width="200"><p>Iteration 1400</p></div>
-        <div class="img-block"><img src="yifei2000.png" width="200"><p>Iteration 2000</p></div>
+        <div class="img-block"><img src="yifei200.png" width="100"><p>Iteration 200</p></div>
+        <div class="img-block"><img src="yifei800.png" width="100"><p>Iteration 800</p></div>
+        <div class="img-block"><img src="yifei1400.png" width="100"><p>Iteration 1400</p></div>
+        <div class="img-block"><img src="yifei2000.png" width="100"><p>Iteration 2000</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">Final Results for Different Hyperparameters</h3>
       <p>I experimented with two choices of maximum positional encoding frequency (L) and two choices of MLP width. High frequency L = 10 and width = 256 captures fine details. Reducing width or frequency leads to blurrier results.</p>
 
       <div class="two-images">
-        <div class="img-block"><img src="yifei2000.png" width="250"><p>Original / Baseline (Iteration 2000)</p></div>
-        <div class="img-block"><img src="L10W32.png" width="250"><p>High PE L=10, Width=32</p></div>
+        <div class="img-block"><img src="yifei2000.png" width="150"><p>L=10, Width=256</p></div>
+        <div class="img-block"><img src="L10W32.png" width="150"><p>L=10, Width=32</p></div>
       </div>
 
       <div class="two-images" style="margin-bottom:20px;">
-        <div class="img-block"><img src="L2W256.png" width="250"><p>Low PE L=2, Width=256</p></div>
-        <div class="img-block"><img src="L2W32.png" width="250"><p>Low PE L=2, Width=32</p></div>
+        <div class="img-block"><img src="L2W256.png" width="150"><p>L=2, Width=256</p></div>
+        <div class="img-block"><img src="L2W32.png" width="150"><p>L=2, Width=32</p></div>
       </div>
 
       <h3 style="text-align:center; margin-top:40px;">PSNR Curve</h3>
       <p>I train the MLP using MSE with learning rate 1×10⁻². PSNR is computed as:</p>
       <p style="text-align:center;">$$\text{PSNR} = 10 \cdot \log_{10}\left(\frac{1}{\text{MSE}}\right)$$</p>
       <div class="two-images">
-        <div class="img-block"><img src="yifeipsnr_curve.png" width="500"><p>PSNR over Training Iterations</p></div>
+        <div class="img-block"><img src="yifeipsnr_curve.png" width="600"><p>PSNR over Training Iterations</p></div>
       </div>
     </div>
 
@@ -220,7 +221,6 @@
   <!-- =========================== -->
   <!-- Part 2.1 -->
   <!-- =========================== -->
-  <div class="section" id="part2-1">
     <h2>Part 2.1: Create Rays from Cameras</h2>
 
     <h3>Camera to World Coordinate Conversion</h3>
@@ -263,7 +263,6 @@
   <!-- =========================== -->
   <!-- Part 2.2 -->
   <!-- =========================== -->
-  <div class="section" id="part2-2">
     <h2>Part 2.2: Sampling</h2>
 
     <p>
@@ -281,7 +280,6 @@
   <!-- =========================== -->
   <!-- Part 2.3 -->
   <!-- =========================== -->
-  <div class="section" id="part2-3">
     <h2>Part 2.3: Dataloader</h2>
 
     <p>
@@ -305,7 +303,6 @@
   <!-- =========================== -->
   <!-- Part 2.4 -->
   <!-- =========================== -->
-  <div class="section" id="part2-4">
     <h2>Part 2.4: Neural Radiance Field</h2>
 
     <p>
@@ -327,7 +324,6 @@
   <!-- =========================== -->
   <!-- Part 2.5 -->
   <!-- =========================== -->
-  <div class="section" id="part2-5">
     <h2>Part 2.5: Volume Rendering</h2>
 
     <p>
@@ -375,7 +371,6 @@
   <!-- =========================== -->
   <!-- Part 2.6 -->
   <!-- =========================== -->
-  <div class="section" id="part2-6">
     <h2>Part 2.6: Training with Your Own Data</h2>
 
     <p>
@@ -384,11 +379,11 @@
     </p>
 
     <div class="flex-images">
-      <div class="img-block"><img src="bottle1000.png" width="200"><p>Iteration 1000</p></div>
-      <div class="img-block"><img src="bottle2000.png" width="200"><p>Iteration 2000</p></div>
-      <div class="img-block"><img src="bottle3000.png" width="200"><p>Iteration 3000</p></div>
-      <div class="img-block"><img src="bottle4000.png" width="200"><p>Iteration 4000</p></div>
-      <div class="img-block"><img src="bottle5000.png" width="200"><p>Iteration 5000 (Final)</p></div>
+      <div class="img-block"><img src="bottle1000.png" width="100"><p>Iteration 1000</p></div>
+      <div class="img-block"><img src="bottle2000.png" width="100"><p>Iteration 2000</p></div>
+      <div class="img-block"><img src="bottle3000.png" width="100"><p>Iteration 3000</p></div>
+      <div class="img-block"><img src="bottle4000.png" width="100"><p>Iteration 4000</p></div>
+      <div class="img-block"><img src="bottle5000.png" width="100"><p>Iteration 5000 (Final)</p></div>
     </div>
 
     <div class="two-images" style="margin-top: 30px;">
@@ -397,7 +392,7 @@
     </div>
 
     <div style="text-align:center; margin-top: 40px;">
-      <img src="bottle.gif" width="400"><p>Final Rendering (Orbit View)</p>
+      <img src="bottle.gif" width="320"><p>Final Rendering (Orbit View)</p>
     </div>
   </div>
 
