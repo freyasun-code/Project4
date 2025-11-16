@@ -545,7 +545,14 @@ $$
     using the NeRF MLP, then applied the discrete volume rendering formula to get the final
     RGB value for that ray.
   </p>
-
+<p style="margin-top: 20px; text-align: justify;">
+  I use <b>2000 optimization iterations</b>, sampling <b>4096 rays</b> per iteration and 
+  <b>64 points per ray</b> between near and far bounds of <b>2</b> and <b>6</b>.
+  The NeRF network uses <b>width 256</b> with positional encoding levels 
+  <b>10</b> for 3D points and <b>4</b> for view directions.
+  Training is performed using the Adam optimizer with a learning rate of 
+  <b>5×10<sup>−4</sup></b>.
+</p>
 
   <!-- Process images row -->
   <div style="
@@ -615,8 +622,8 @@ $$
 <h3 style="margin-top: 60px;">Part 2.6: Training with Your Own Data</h3>
 
 <p style="margin-top: 20px; text-align: justify;">
-  I use <b>4000 optimization iterations</b>, sampling <b>10,000 rays</b> per iteration and 
-  <b>64 points per ray</b> between near and far bounds of <b>2.0</b> and <b>6.0</b>.
+  I use <b>5000 optimization iterations</b>, sampling <b>10,000 rays</b> per iteration and 
+  <b>64 points per ray</b> between near and far bounds of <b>0.03</b> and <b>0.5</b>.
   The NeRF network uses <b>width 256</b> with positional encoding levels 
   <b>10</b> for 3D points and <b>4</b> for view directions.
   Training is performed using the Adam optimizer with a learning rate of 
