@@ -105,7 +105,7 @@
   </nav>
 
   <div class="container">
-    <h1>Project1: Images of the Russian Empire — Calibration & 3D Scan (Part 0)</h1>
+    <h1>Project4: Neural Radiance Field</h1>
 
     <!-- =========================== -->
     <!-- Part 0.0 -->
@@ -218,9 +218,12 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
     <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
   </p>
 
-  <div style="text-align:center; margin:10px 0;">
-    PE(x) = [x, sin(2<sup>0</sup>πx), cos(2<sup>0</sup>πx), …, sin(2<sup>L−1</sup>πx), cos(2<sup>L−1</sup>πx)]
-  </div>
+  <p style="text-align:center; margin:20px 0;">
+$$
+\text{PE}(x) = \{ x, \ \sin(2^0 \pi x), \ \cos(2^0 \pi x), \ \sin(2^1 \pi x), \ \cos(2^1 \pi x), \ \dots, \ \sin(2^{L-1} \pi x), \ \cos(2^{L-1} \pi x) \}
+$$
+</p>
+
 
   <p>
     High-frequency PE allows the network to reproduce sharp edges and fine details.
@@ -372,19 +375,14 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 <h3 style="text-align: center; margin-top: 40px;">PSNR Curve</h3>
 
 <p>
-  I train the MLP using mean squared error (MSE) and the Adam optimizer (learning rate 1×10⁻²).
+  I train the MLP using mean squared error (MSE) at a learning rate of 1×10⁻².
   To monitor reconstruction quality, I compute the peak signal-to-noise ratio (PSNR):
 </p>
 
-<p style="margin-left:20px;">
-  PSNR = 10 · log10(1 / MSE)
+<p style="text-align:center; margin:20px 0;">
+  $$\text{PSNR} = 10 \cdot \log_{10}\left(\frac{1}{\text{MSE}}\right)$$
 </p>
-<p>
-  I also plotted the PSNR over training iterations for one image of my choice. The plot
-  shows how reconstruction quality improves as training progresses. Higher positional
-  encoding frequencies and wider networks converge faster and achieve higher PSNR values,
-  while lower frequencies and narrower networks saturate at lower PSNR.
-</p>
+
 
 <div style="text-align: center; margin-top: 20px;">
   <img src="yifeipsnr_curve.png" width="500">
