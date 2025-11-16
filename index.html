@@ -141,8 +141,8 @@
       </p>
       
       <p>
-          <img src="bottle1.JPG" width="300" style="margin-right: 20px;">
-          <img src="bottle2.JPG" width="300">
+          <img src="bottle1.JPG" width="250" style="margin-right: 20px;">
+          <img src="bottle2.JPG" width="250">
       </p>
 
     </div>
@@ -179,7 +179,6 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
       </div>
     </div>
 
-    <hr>
 
     <!-- =========================== -->
     <!-- Part 0.4 -->
@@ -208,60 +207,49 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 <div class="section" id="part1">
   <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
 
-<p>
-  In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
-  <i>(x, y)</i> to RGB values. No volume rendering is involved.
-</p>
+  <p>
+    In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
+    <i>(x, y)</i> to RGB values. No volume rendering is involved.
+  </p>
 
-<h3>1. Positional Encoding (PE)</h3>
-<p>
-  Each 2D coordinate is expanded using sinusoidal positional encoding with 
-  <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
-</p>
+  <h3>1. Positional Encoding (PE)</h3>
+  <p>
+    Each 2D coordinate is expanded using sinusoidal positional encoding with 
+    <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
+  </p>
 
-<p style="margin-left:20px;">
-  PE(x) = [x, sin(2<sup>0</sup>πx), cos(2<sup>0</sup>πx), …,
-  sin(2<sup>L−1</sup>πx), cos(2<sup>L−1</sup>πx)]
-</p>
+  <div style="text-align:center; margin:10px 0;">
+    PE(x) = [x, sin(2<sup>0</sup>πx), cos(2<sup>0</sup>πx), …, sin(2<sup>L−1</sup>πx), cos(2<sup>L−1</sup>πx)]
+  </div>
 
-<p>
-  High-frequency PE allows the network to reproduce sharp edges and fine details.
-</p>
+  <p>
+    High-frequency PE allows the network to reproduce sharp edges and fine details.
+  </p>
 
-<h3>2. MLP Architecture</h3>
-<p>
-  The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations.
-  A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. 
-  The ground-truth image is also normalized to this range.
-</p>
+  <h3>2. MLP Architecture</h3>
+  <p>
+    The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations.
+    A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. 
+    The ground-truth image is also normalized to this range.
+  </p>
 
-<h3>3. Random Pixel Sampling</h3>
-<p>
-  Following the strategy used in my classmate’s implementation, each training iteration samples 
-  <b>10,000</b> random pixels:
-</p>
+  <h3>3. Random Pixel Sampling</h3>
+  <p>
+    Following the strategy used in my classmate’s implementation, each training iteration samples 
+    <b>10,000</b> random pixels:
+  </p>
 
-<ul>
-  <li>The H×W image is flattened into a 1-D array.</li>
-  <li>Random indices are selected from {0 … H·W−1}.</li>
-  <li>Each index <code>idx</code> is converted back to (x, y) using:</li>
-</ul>
+  <div style="text-align:center; margin:10px 0;">
+    <ul style="display:inline-block; text-align:left;">
+      <li>The H×W image is flattened into a 1-D array.</li>
+      <li>Random indices are selected from {0 … H·W−1}.</li>
+      <li>Each index <code>idx</code> is converted back to (x, y)</li>
+      <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
+      <li>The corresponding RGB values are retrieved for supervision.</li>
+    </ul>
+  </div>
 
-<pre style="background:#f5f5f5; padding:10px; border-radius:6px;">
-ys = idx // W
-xs = idx % W
-</pre>
-
-<ul>
-  <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
-  <li>The corresponding RGB values are retrieved for supervision.</li>
-</ul>
-
-<p>
-  This dataloader keeps memory usage low and makes training efficient even on high-resolution images.
-</p>
-
-
+</div>
 
   <hr>
 
@@ -336,13 +324,7 @@ xs = idx % W
   When the width is reduced to 32 while keeping L = 10, the main structures are still preserved
   but the output becomes slightly noisier and blurrier. Lowering the frequency to L = 2 makes
   the network only capable of representing smooth, low-frequency patterns, and reducing
-  width to 32 further exaggerates this smoothing, making images almost piecewise planar.
-</p>
-
-<p>
-  These trends are visible in both my own image and the example fox image. Below are the
-  reconstructed results from four different hyperparameter settings, arranged in a 2×2 grid
-  (2 images per row).
+  width to 32 further exaggerates this smoothing.
 </p>
 
 <!-- First row -->
