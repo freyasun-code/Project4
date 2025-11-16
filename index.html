@@ -189,23 +189,16 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
 
       <p>
         After estimating the pose for each image, I prepared the final dataset by undistorting all
-        images using the calibration parameters. Since NeRF assumes a perfect pinhole camera model,
-        removing radial and tangential distortion is important for geometric consistency.
-      </p>
-
-      <p>
+        images using the calibration parameters.
         I used <code>cv2.undistort()</code> together with the calibrated intrinsics and distortion 
-        coefficients to obtain clean, geometrically-correct images. Some images exhibit black borders 
-        after undistortion; for these cases, I optionally used 
-        <code>cv2.getOptimalNewCameraMatrix()</code> to compute a cropped intrinsics matrix and a valid ROI,
-        ensuring that the principal point is updated whenever cropping occurs.
+        coefficients to obtain geometrically-correct images. Some images exhibit black borders 
+        after undistortion. I used 
+        <code>cv2.getOptimalNewCameraMatrix()</code> to compute a cropped intrinsics matrix and a valid ROI.
       </p>
 
       <p>
-        Finally, I organized all undistorted images, camera intrinsics, and camera-to-world pose matrices
-        into a structured dataset (following the JSON / transforms schema used in NeRF pipelines).  
-        This dataset will serve as the input for dense reconstruction and rendering in later parts
-        of the project.
+        I organized all undistorted images, camera intrinsics, and camera-to-world pose matrices
+        into a structured dataset.  
       </p>
     </div>
 
@@ -216,21 +209,13 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
   <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
 
   <p>
-    Before moving to a full 3D Neural Radiance Field (NeRF), this section uses a
-    <b>2D Neural Field</b> to build intuition. In the 2D case there is no notion of radiance or
+    In the 2D case there is no notion of radiance or
     volume density, so NeRF simplifies into a function that maps a 2D pixel coordinate
-    <i>(x, y)</i> to an RGB color <i>(r, g, b)</i>. The goal is to learn this function using a
-    small MLP with positional encoding.
+    <i>(x, y)</i> to an RGB color <i>(r, g, b)</i>. 
   </p>
-
-  <p>
-    I followed the assignment instructions and implemented the following components:
-  </p>
-
   <p>
     <b>1. Positional Encoding (PE)</b><br>
-    I applied sinusoidal positional encoding to each 2D coordinate, following the formulation
-    from the NeRF paper. With a maximum frequency level of <i>L = 10</i>, the original
+    I applied sinusoidal positional encoding to each 2D coordinate. With a maximum frequency level of <i>L = 10</i>, the original
     2D input was expanded to a 42-dimensional vector. High-frequency PE allows the network
     to reproduce sharp edges and fine structures in the target image.
   </p>
@@ -250,20 +235,6 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
     pixel coordinates <i>(x / W, y / H)</i> and their corresponding RGB values.
   </p>
 
-  <p>
-    <b>4. Loss Function, Optimizer, and Metrics</b><br>
-    The network was trained using <code>MSELoss</code> between predicted and ground-truth colors.
-    I used the Adam optimizer with a learning rate of <code>1e-2</code> and trained for
-    1000–3000 iterations. Reconstruction quality was evaluated using the Peak
-    Signal-to-Noise Ratio (PSNR), computed from the MSE.
-  </p>
-
-  <p>
-    <b>5. Hyperparameter Tuning</b><br>
-    I experimented with different MLP widths and different PE frequency levels to see
-    how they affect convergence and reconstruction sharpness. Below are the results after
-    200, 800, 1400, and 2000 training iterations.
-  </p>
 
   <hr>
 
@@ -347,31 +318,36 @@ With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's
   (2 images per row).
 </p>
 
-<!-- 2x2 image grid, 2 per row -->
-<div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
+<!-- First row -->
+<div style="display: flex; justify-content: center; gap: 40px; margin-top: 20px; margin-bottom: 20px;">
 
-  <!-- First row -->
-  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+  <div style="text-align: center;">
     <img src="yifei2000.png" width="250">
-    <p style="text-align: center; margin-top: 8px;">Original / Baseline (Iteration 2000)</p>
+    <p style="margin-top: 8px;">Original / Baseline (Iteration 2000)</p>
   </div>
 
-  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
+  <div style="text-align: center;">
     <img src="L10W32.png" width="250">
-    <p style="text-align: center; margin-top: 8px;">High PE L=10, Width=32</p>
+    <p style="margin-top: 8px;">High PE L=10, Width=32</p>
   </div>
 
-  <!-- Second row -->
-  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
-    <img src="L2W256.png" width="250">
-    <p style="text-align: center; margin-top: 8px;">Low PE L=2, Width=256</p>
-  </div>
-
-  <div style="flex: 0 0 250px; text-align: center; margin-bottom: 20px;">
-    <img src="L2W32.png" width="250">
-    <p style="text-align: center; margin-top: 8px;">Low PE L=2, Width=32</p>
-  </div>
 </div>
+
+<!-- Second row -->
+<div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px;">
+
+  <div style="text-align: center;">
+    <img src="L2W256.png" width="250">
+    <p style="margin-top: 8px;">Low PE L=2, Width=256</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="L2W32.png" width="250">
+    <p style="margin-top: 8px;">Low PE L=2, Width=32</p>
+  </div>
+
+</div>
+
 
 <!-- PSNR curve description -->
 <h3 style="text-align: center; margin-top: 40px;">PSNR Curve</h3>
