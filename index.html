@@ -11,8 +11,6 @@
       margin: 0;
       padding: 0;
     }
-
-    /* 导航栏 */
     nav {
       background: rgba(0, 0, 0, 0.3);
       padding: 10px 20px;
@@ -29,47 +27,39 @@
     nav a:hover {
       text-decoration: underline;
     }
-
     .container {
       width: 80%;
       margin: auto;
       padding: 20px;
     }
-
     h1 {
       text-align: center;
       margin-top: 20px;
     }
-
     .section {
       background: rgba(0,0,0,0.2);
       padding: 20px;
       margin: 40px 0;
       border-radius: 12px;
     }
-
     .section h2 {
       color: #ffddff;
       text-align: center;
       margin-top: 0;
     }
-
     p {
-      text-align: left;
+      text-align: justify;
       max-width: 1000px;
       margin: auto;
       margin-bottom: 20px;
       font-size: 18px;
       color: white;
     }
-
     hr {
       border: none;
       border-top: 1px solid rgba(255,255,255,0.12);
       margin: 30px 0;
     }
-
-    /* 图片排版 */
     .two-images {
       display: flex;
       justify-content: center;
@@ -92,8 +82,6 @@
       color: white;
       text-align: center;
     }
-
-    /* 小屏幕适配 */
     @media (max-width: 760px) {
       .container { width: 92%; padding: 12px; }
       .img-block { flex: 0 0 45%; }
@@ -103,108 +91,300 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
+  <nav>
+    <a href="#part0">Part0</a>
+    <a href="#part1">Part1</a>
+    <a href="#part2">Part2</a>
+  </nav>
 
-<nav>
-  <a href="#part0">Part0</a>
-  <a href="#part1">Part1</a>
-  <a href="#part2">Part2</a>
-</nav>
+  <div class="container">
+    <h1>Project4: Neural Radiance Field</h1>
 
-<div class="container">
-  <h1>Project4: Neural Radiance Field</h1>
+    <!-- =========================== -->
+    <!-- Part 0 -->
+    <!-- =========================== -->
+    <div class="section" id="part0">
+      <h2>Part 0.0: Calibrating My Camera and Capturing a 3D Scan</h2>
 
-  <!-- =========================== -->
-  <!-- Part 0 -->
-  <!-- =========================== -->
-  <div class="section" id="part0">
-    <h2>Part 0: Camera Calibration & 3D Scan</h2>
-
-    <h3>Part 0.1: Calibrating My Camera</h3>
-    <p>
-      I first captured 33 calibration images with multiple ArUco markers. Using OpenCV, I extracted 2D-3D correspondences and estimated the intrinsic matrix and distortion coefficients.
-    </p>
-
-    <h3>Part 0.2: Capturing the 3D Scan</h3>
-    <p>
-      I took 34 pictures of the bottle from many viewpoints.  
-      <img src="bottle1.JPG" width="250" style="margin-right: 20px;">
-      <img src="bottle2.JPG" width="250">
-    </p>
-
-    <h3>Part 0.3: Estimating Camera Pose</h3>
-    <p>
-      Using ArUco markers and solvePnP, I computed rotation and translation matrices for each image. 
-      The results are visualized below.
-    </p>
-    <div class="two-images">
-      <div class="img-block">
-        <img src="pose1.jpg" alt="Pose Visualization 1">
-        <p>Estimated Pose (Example 1)</p>
+      <h2 id="part0-1">Part 0.1: Calibrating My Camera</h2>
+      <p>
+        I first captured 33 calibration images containing multiple ArUco markers, keeping the zoom fixed while varying the viewing angle and distance.
+      </p>
+      <p>
+        For each ArUco tag, I defined a local 3D coordinate system on the tag plane to represent its real-world coordinates. 
+        I then iterated over all calibration images and used OpenCV’s ArUco detector to find the 2D pixel coordinates of the detected tag corners. 
+        Images where no markers were detected were skipped.
+      </p>
+      <p>
+        After collecting all 2D–3D correspondences across the dataset, I used cv2.calibrateCamera() to estimate the camera intrinsic matrix and distortion coefficients. 
+        These calibration parameters are subsequently used to compute object poses for 3D scanning.
+      </p>
+      <hr>
+      <h2 id="part0-2">Part 0.2: Capturing the 3D Scan</h2>
+      <p>
+        I took 34 pictures of the bottle from many viewpoints with substantial overlap.
+      </p>
+      <div class="two-images">
+        <div class="img-block">
+          <img src="bottle1.JPG" alt="Bottle Scan 1">
+          <p>Bottle Scan 1</p>
+        </div>
+        <div class="img-block">
+          <img src="bottle2.JPG" alt="Bottle Scan 2">
+          <p>Bottle Scan 2</p>
+        </div>
       </div>
-      <div class="img-block">
-        <img src="pose2.jpg" alt="Pose Visualization 2">
-        <p>Estimated Pose (Example 2)</p>
+
+      <h2 id="part0-3">Part 0.3: Estimating Camera Pose</h2>
+      <p>
+        With the camera intrinsics calibrated in Part 0.1, I next estimated the camera's 3D position and orientation for each image.
+        Each scan image contains a single ArUco tag placed next to the object. 
+        I used OpenCV’s ArUco detector to find the 2D pixel coordinates of the tag corners, 
+        and, knowing the tag’s physical size, defined the corresponding 3D coordinates on a flat z=0 plane. 
+        Using these 2D–3D correspondences, I applied <code>cv2.solvePnP()</code> to compute the rotation and translation of the tag relative to the camera. 
+        The resulting axis-angle vectors were converted to rotation matrices with <code>cv2.Rodrigues()</code>, 
+        and I inverted it to get the camera-to-world (c2w) poses needed for visualization and NeRF-style pipelines. 
+        After solving the extrinsics for all images, the camera poses and corresponding images are shown below.
+      </p>
+      <div class="two-images">
+        <div class="img-block">
+          <img src="pose1.jpg" alt="Pose Visualization 1">
+          <p>Estimated Pose (Example 1)</p>
+        </div>
+        <div class="img-block">
+          <img src="pose2.jpg" alt="Pose Visualization 2">
+          <p>Estimated Pose (Example 2)</p>
+        </div>
+      </div>
+
+      <h2 id="part0-4">Part 0.4: Undistorting Images and Building the Dataset</h2>
+      <p>
+        After estimating the pose for each image, I prepared the final dataset by undistorting all
+        images using the calibration parameters.
+        I used <code>cv2.undistort()</code> together with the calibrated intrinsics and distortion 
+        coefficients to obtain geometrically-correct images. Some images exhibit black borders 
+        after undistortion. I used 
+        <code>cv2.getOptimalNewCameraMatrix()</code> to compute a cropped intrinsics matrix and a valid ROI.
+      </p>
+      <p>
+        I organized all undistorted images, camera intrinsics, and camera-to-world pose matrices
+        into a structured dataset.
+      </p>
+    </div>
+
+    <!-- =========================== -->
+    <!-- Part 1 -->
+    <!-- =========================== -->
+    <div class="section" id="part1">
+      <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+      <p>
+        In the 2D setting, the neural field learns a direct mapping from pixel coordinates 
+        <i>(x, y)</i> to RGB values. No volume rendering is involved.
+      </p>
+
+      <h3>1. Positional Encoding (PE)</h3>
+      <p>
+        Each 2D coordinate is expanded using sinusoidal positional encoding with 
+        <b>L = 10</b> frequency levels. This transforms the 2D input into a 42-D feature vector:
+      </p>
+      <p style="text-align:center; margin:20px 0;">
+        $$
+        \text{PE}(x) = \{ x, \ \sin(2^0 \pi x), \ \cos(2^0 \pi x), \dots, \ \sin(2^{L-1} \pi x), \ \cos(2^{L-1} \pi x) \}
+        $$
+      </p>
+      <p>
+        High-frequency PE allows the network to reproduce sharp edges and fine details.
+      </p>
+
+      <h3>2. MLP Architecture</h3>
+      <p>
+        The encoded coordinates are passed into a 4-layer MLP with 256 hidden units and ReLU activations.
+        A final <code>Sigmoid</code> layer ensures RGB outputs fall within <i>[0, 1]</i>. 
+        The ground-truth image is also normalized to this range.
+      </p>
+
+      <h3>3. Random Pixel Sampling</h3>
+      <p>
+        Following the strategy used in my classmate’s implementation, each training iteration samples 
+        <b>10,000</b> random pixels:
+      </p>
+      <ul style="max-width:600px; margin:auto; text-align:left;">
+        <li>The H×W image is flattened into a 1-D array.</li>
+        <li>Random indices are selected from {0 … H·W−1}.</li>
+        <li>Each index <code>idx</code> is converted back to (x, y)</li>
+        <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
+        <li>The corresponding RGB values are retrieved for supervision.</li>
+      </ul>
+
+      <h2>Training Results</h2>
+      <p>
+        I trained the network for 2000 iterations for each image. In the beginning, the model only captures a rough outline of the fox.
+        As the number of iterations increases, the reconstruction becomes clearer and starts to recover more fine-grained details.
+        Eventually, the network produces a result that closely matches the original image.
+      </p>
+
+      <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:30px;">
+        <div class="img-block">
+          <img src="fox200.png" alt="Iteration 200">
+          <p>Iteration 200</p>
+        </div>
+        <div class="img-block">
+          <img src="fox800.png" alt="Iteration 800">
+          <p>Iteration 800</p>
+        </div>
+        <div class="img-block">
+          <img src="fox1400.png" alt="Iteration 1400">
+          <p>Iteration 1400</p>
+        </div>
+        <div class="img-block">
+          <img src="fox2000.png" alt="Iteration 2000">
+          <p>Iteration 2000</p>
+        </div>
+      </div>
+
+      <h3 style="text-align:center; margin-top:40px;">My Own Image</h3>
+      <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
+        <div class="img-block">
+          <img src="yifei200.png" alt="Iteration 200">
+          <p>Iteration 200</p>
+        </div>
+        <div class="img-block">
+          <img src="yifei800.png" alt="Iteration 800">
+          <p>Iteration 800</p>
+        </div>
+        <div class="img-block">
+          <img src="yifei1400.png" alt="Iteration 1400">
+          <p>Iteration 1400</p>
+        </div>
+        <div class="img-block">
+          <img src="yifei2000.png" alt="Iteration 2000">
+          <p>Iteration 2000</p>
+        </div>
+      </div>
+
+      <h3 style="text-align:center; margin-top:40px;">Final Results for Different Hyperparameters</h3>
+      <p>
+        I experimented with two choices of maximum positional encoding frequency (L) and two
+        choices of MLP width (number of hidden channels). With a high frequency L = 10 and
+        a wide network (width = 256), the network captures fine details and sharp edges very well.
+        When the width is reduced to 32 while keeping L = 10, the main structures are still preserved
+        but the output becomes slightly noisier and blurrier. Lowering the frequency to L = 2 makes
+        the network only capable of representing smooth, low-frequency patterns, and reducing
+        width to 32 further exaggerates this smoothing.
+      </p>
+
+      <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-top:20px;">
+        <div class="img-block">
+          <img src="yifei2000.png" alt="Original Baseline">
+          <p>Original / Baseline (Iteration 2000)</p>
+        </div>
+        <div class="img-block">
+          <img src="L10W32.png" alt="High PE L=10, Width=32">
+          <p>High PE L=10, Width=32</p>
+        </div>
+        <div class="img-block">
+          <img src="L2W256.png" alt="Low PE L=2, Width=256">
+          <p>Low PE L=2, Width=256</p>
+        </div>
+        <div class="img-block">
+          <img src="L2W32.png" alt="Low PE L=2, Width=32">
+          <p>Low PE L=2, Width=32</p>
+        </div>
+      </div>
+
+      <h3 style="text-align:center; margin-top:40px;">PSNR Curve</h3>
+      <p>
+        I train the MLP using mean squared error (MSE) at a learning rate of 1×10⁻².
+        To monitor reconstruction quality, I compute the peak signal-to-noise ratio (PSNR):
+      </p>
+      <p style="text-align:center; margin:20px 0;">
+        $$\text{PSNR} = 10 \cdot \log_{10}\left(\frac{1}{\text{MSE}}\right)$$
+      </p>
+      <div class="img-block" style="margin:auto;">
+        <img src="yifeipsnr_curve.png" width="500">
+        <p>PSNR over Training Iterations</p>
       </div>
     </div>
 
-    <h3>Part 0.4: Undistorting Images and Building Dataset</h3>
+<!-- =========================== -->
+<!-- Part 2 -->
+<!-- =========================== -->
+<div class="section" id="part2">
+  <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+
+  <!-- =========================== -->
+  <!-- Part 2.1 -->
+  <!-- =========================== -->
+  <div class="section" id="part2-1">
+    <h2>Part 2.1: Create Rays from Cameras</h2>
+
+    <h3>Camera to World Coordinate Conversion</h3>
     <p>
-      All images are undistorted using the calibration parameters and organized with camera intrinsics and c2w poses into a structured dataset.
+      The transformation between world coordinates <code>𝐗_w</code> and camera coordinates <code>𝐗_c</code>
+      can be defined using a rotation matrix <code>R</code> and a translation vector <code>t</code>:
+    </p>
+    <p style="text-align: center;">
+      $$\mathbf{X}_c = R \mathbf{X}_w + t$$
+    </p>
+    <p>
+      The combined matrix is called the world-to-camera (w2c) transformation or extrinsic matrix. Its inverse
+      gives the camera-to-world (c2w) transformation.
+    </p>
+
+    <h3>Pixel to Camera Coordinate Conversion</h3>
+    <p>
+      Consider a pinhole camera with intrinsic matrix
+    </p>
+    <p style="text-align: center;">
+      $$K = \begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}$$
+    </p>
+    <p>
+      A 3D point in camera space <code>𝐗_c = [X_c, Y_c, Z_c]^T</code> can be projected to pixel coordinates <code>uv</code>:
+    </p>
+    <p style="text-align: center;">
+      $$uv = K \frac{\mathbf{X}_c}{Z_c}$$
+    </p>
+
+    <h3>Pixel to Ray</h3>
+    <p>
+      Each pixel defines a ray with origin <code>r_o</code> and direction <code>r_d</code>. The camera origin
+      in world space is given by the translation component of the <code>c2w</code> matrix. The ray direction is normalized:
+    </p>
+    <p style="text-align: center; font-weight: bold; font-size: 18px;">
+      $$\mathbf{x}(t) = \mathbf{r}_o + t \mathbf{r}_d$$
     </p>
   </div>
 
   <!-- =========================== -->
-  <!-- Part 1 -->
+  <!-- Part 2.2 -->
   <!-- =========================== -->
-  <div class="section" id="part1">
-    <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+  <div class="section" id="part2-2">
+    <h2>Part 2.2: Sampling</h2>
+
     <p>
-      The network maps 2D pixel coordinates to RGB. Positional encoding expands the 2D input for high-frequency details. A 4-layer MLP predicts RGB.
+      Once rays are defined for all pixels in all views, we sample a subset of rays for training. 
+      Each ray consists of an origin and a direction, along with its corresponding RGB color from the image.
     </p>
-    <div class="two-images">
-      <div class="img-block">
-        <img src="fox200.png" alt="Iteration 200">
-        <p>Iteration 200</p>
-      </div>
-      <div class="img-block">
-        <img src="fox800.png" alt="Iteration 800">
-        <p>Iteration 800</p>
-      </div>
-      <div class="img-block">
-        <img src="fox1400.png" alt="Iteration 1400">
-        <p>Iteration 1400</p>
-      </div>
-      <div class="img-block">
-        <img src="fox2000.png" alt="Iteration 2000">
-        <p>Iteration 2000</p>
-      </div>
-    </div>
-    <p style="text-align:center;">PSNR Curve:</p>
-    <div class="img-block" style="margin:auto;">
-      <img src="yifeipsnr_curve.png" alt="PSNR Curve" width="500">
-      <p>PSNR over Training Iterations</p>
-    </div>
+
+    <h3>Sampling Points along Rays</h3>
+    <p>
+      To train NeRF, each ray is discretized into a set of 3D sample points along its path. 
+      For each ray, define near and far bounds and split the segment into <code>n_samples</code> bins.
+    </p>
   </div>
 
   <!-- =========================== -->
-  <!-- Part 2 -->
+  <!-- Part 2.3 -->
   <!-- =========================== -->
-  <div class="section" id="part2">
-    <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+  <div class="section" id="part2-3">
+    <h2>Part 2.3: Dataloader</h2>
 
-    <h3>2.1: Create Rays from Cameras</h3>
     <p>
-      Transform world coordinates to camera coordinates and project pixels to rays.
+      Implemented a dataloader that randomly samples pixels from all multi-view images.
+      Each sampled pixel is converted to a ray with origin and direction in world coordinates,
+      and the corresponding RGB color is returned.
     </p>
-    <p style="text-align:center;">$$\mathbf{x}(t) = \mathbf{r}_o + t \mathbf{r}_d$$</p>
 
-    <h3>2.2: Sampling Points</h3>
-    <p>Sample points along rays between near and far bounds.</p>
-
-    <h3>2.3: Dataloader</h3>
-    <p>
-      Rays and RGB are organized in a dataloader. Sample rays can be visualized below.
-    </p>
     <div class="two-images">
       <div class="img-block">
         <img src="random_100_rays.png" alt="Random 100 Rays">
@@ -215,53 +395,112 @@
         <p>100 Rays from One Camera</p>
       </div>
     </div>
+  </div>
 
-    <h3>2.4: NeRF Architecture</h3>
+  <!-- =========================== -->
+  <!-- Part 2.4 -->
+  <!-- =========================== -->
+  <div class="section" id="part2-4">
+    <h2>Part 2.4: Neural Radiance Field</h2>
+
     <p>
-      Network predicts density and RGB. Positional encoding applied. Skip connections used.
+      Build the <b>Neural Radiance Field (NeRF)</b>. The network predicts both <b>density</b> and <b>color</b> for each 3D point.
     </p>
-    <div style="text-align:center;">
-      <img src="intronerf.png" alt="NeRF MLP" width="700">
+
+    <ul>
+      <li><b>Input:</b> 3D world coordinates and 3D ray directions.</li>
+      <li><b>Output:</b> Density (σ) and RGB color. Density via ReLU, color via Sigmoid.</li>
+      <li><b>Positional Encoding:</b> Sinusoidal PE for coordinates (L=10) and directions (L=4).</li>
+      <li><b>Input Injection:</b> PE inputs concatenated to middle of MLP for stability.</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <img src="intronerf.png" width="700" alt="NeRF Architecture">
+    </div>
+  </div>
+
+  <!-- =========================== -->
+  <!-- Part 2.5 -->
+  <!-- =========================== -->
+  <div class="section" id="part2-5">
+    <h2>Part 2.5: Volume Rendering</h2>
+
+    <p>
+      Implemented the volume rendering equation. Continuous form:
+    </p>
+    <p style="text-align:center;">
+      \( C(\mathbf{r}) = \int_{t_n}^{t_f} T(t) \, \sigma(\mathbf{r}(t)) \, \mathbf{c}(\mathbf{r}(t), \mathbf{d}) \, dt, \quad
+      T(t) = \exp\Big(-\int_{t_n}^t \sigma(\mathbf{r}(s)) ds\Big) \)
+    </p>
+    <p>
+      Discrete approximation:
+    </p>
+    <p style="text-align:center;">
+      \( \hat{C}(\mathbf{r}) = \sum_{i=1}^N T_i (1 - \exp(-\sigma_i \delta_i)) \mathbf{c}_i, \quad
+      T_i = \exp\Big(-\sum_{j=1}^{i-1} \sigma_j \delta_j\Big) \)
+    </p>
+
+    <p>
+      PyTorch implementation with 2000 iterations, 4096 rays per iteration, 64 points per ray.
+      Network width 256, PE levels 10 for points and 4 for directions, Adam optimizer LR=5e-4.
+    </p>
+
+    <div class="flex-images">
+      <div class="img-block"><img src="lego100.png" width="160"><p>Iteration 100</p></div>
+      <div class="img-block"><img src="lego500.png" width="160"><p>Iteration 500</p></div>
+      <div class="img-block"><img src="lego1000.png" width="160"><p>Iteration 1000</p></div>
+      <div class="img-block"><img src="lego1500.png" width="160"><p>Iteration 1500</p></div>
+      <div class="img-block"><img src="lego2000.png" width="160"><p>Iteration 2000</p></div>
     </div>
 
-    <h3>2.5: Volume Rendering</h3>
-    <p>Compute color along rays using discrete volume rendering.</p>
-    <div class="two-images">
+    <div class="two-images" style="margin-top: 30px;">
       <div class="img-block">
-        <img src="legoPSNR.png" alt="Validation PSNR Curve" width="400">
-        <p>Validation PSNR Curve</p>
+        <img src="legoPSNR.png" width="400"><p>Validation PSNR Curve</p>
       </div>
       <div class="img-block">
-        <img src="legoloss.png" alt="Training Loss Curve" width="400">
-        <p>Training Loss Curve</p>
+        <img src="legoloss.png" width="400"><p>Training Loss Curve</p>
       </div>
-    </div>
-    <div style="text-align:center; margin-top:20px;">
-      <img src="loopedle.gif" alt="Spherical Render" width="400">
-      <p>Final Rendering (Orbit View)</p>
     </div>
 
-    <h3>2.6: Training with Your Own Data</h3>
-    <p style="text-align:justify;">
-      5000 iterations, 10,000 rays per iteration, 64 points per ray. Width 256 MLP, PE levels 10 for xyz and 4 for view direction. Adam optimizer 5×10⁻⁴.
+    <div style="text-align:center; margin-top: 30px;">
+      <img src="loopedle.gif" width="400" loop="infinite"><p>Rendered GIF (Orbit View)</p>
+    </div>
+  </div>
+
+  <!-- =========================== -->
+  <!-- Part 2.6 -->
+  <!-- =========================== -->
+  <div class="section" id="part2-6">
+    <h2>Part 2.6: Training with Your Own Data</h2>
+
+    <p>
+      For my bottle dataset, training settings: 5000 iterations, 10,000 rays per iteration, 64 points per ray,
+      near/far bounds: 0.03 / 0.5. Network width 256, PE 10 for points, 4 for directions, Adam LR=5e-4.
     </p>
-    <div class="two-images">
-      <div class="img-block"><img src="bottle1000.png" alt="Iteration 1000"><p>Iteration 1000</p></div>
-      <div class="img-block"><img src="bottle2000.png" alt="Iteration 2000"><p>Iteration 2000</p></div>
-      <div class="img-block"><img src="bottle3000.png" alt="Iteration 3000"><p>Iteration 3000</p></div>
-      <div class="img-block"><img src="bottle4000.png" alt="Iteration 4000"><p>Iteration 4000</p></div>
-      <div class="img-block"><img src="bottle5000.png" alt="Iteration 5000"><p>Iteration 5000 (Final)</p></div>
+
+    <div class="flex-images">
+      <div class="img-block"><img src="bottle1000.png" width="200"><p>Iteration 1000</p></div>
+      <div class="img-block"><img src="bottle2000.png" width="200"><p>Iteration 2000</p></div>
+      <div class="img-block"><img src="bottle3000.png" width="200"><p>Iteration 3000</p></div>
+      <div class="img-block"><img src="bottle4000.png" width="200"><p>Iteration 4000</p></div>
+      <div class="img-block"><img src="bottle5000.png" width="200"><p>Iteration 5000 (Final)</p></div>
     </div>
-    <div class="two-images" style="gap:30px; margin-top:20px;">
-      <div class="img-block"><img src="bottlepsnr.png" alt="Validation PSNR" width="340"><p>Validation PSNR Curve</p></div>
-      <div class="img-block"><img src="bottleloss.png" alt="Training Loss" width="400"><p>Training Loss Curve</p></div>
+
+    <div class="two-images" style="margin-top: 30px;">
+      <div class="img-block"><img src="bottlepsnr.png" width="340"><p>Validation PSNR Curve</p></div>
+      <div class="img-block"><img src="bottleloss.png" width="400"><p>Training Loss Curve</p></div>
     </div>
-    <div style="text-align:center; margin-top:30px;">
-      <img src="bottle.gif" alt="Final Rendering Orbit" width="400">
-      <p>Final Rendering (Orbit View)</p>
+
+    <div style="text-align:center; margin-top: 40px;">
+      <img src="bottle.gif" width="400"><p>Final Rendering (Orbit View)</p>
     </div>
   </div>
 </div>
 
+</body>
+</html>
+
+
+  </div>
 </body>
 </html>
