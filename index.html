@@ -604,9 +604,75 @@ $$
   </p>
 
   <div style="text-align: center; margin-top: 10px;">
-    <img src="goodrendered.gif" width="400" loop="infinite">
+    <img src="loopedle.gif" width="400" loop="infinite">
   </div>
 
+</div>
+<!-- =============================================== -->
+<!-- Part 2.6: Training with your own data           -->
+<!-- =============================================== -->
+
+<h3 style="margin-top: 60px;">Part 2.6: Training with Your Own Data</h3>
+
+<p style="margin-top: 20px; text-align: justify;">
+  I use <b>4000 optimization iterations</b>, sampling <b>10,000 rays</b> per iteration and 
+  <b>64 points per ray</b> between near and far bounds of <b>2.0</b> and <b>6.0</b>.
+  The NeRF network uses <b>width 256</b> with positional encoding levels 
+  <b>10</b> for 3D points and <b>4</b> for view directions.
+  Training is performed using the Adam optimizer with a learning rate of 
+  <b>5×10<sup>−4</sup></b>.
+</p>
+
+<!-- Five intermediate training images -->
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
+  <div style="text-align: center;">
+    <img src="bottle1000.png" width="260">
+    <p style="margin-top: 6px;">Iteration 1000</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="bottle2000.png" width="260">
+    <p style="margin-top: 6px;">Iteration 2000</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="bottle3000.png" width="260">
+    <p style="margin-top: 6px;">Iteration 3000</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="bottle4000.png" width="260">
+    <p style="margin-top: 6px;">Iteration 4000</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="bottle5000.png" width="260">
+    <p style="margin-top: 6px;">Iteration 5000 (Final)</p>
+  </div>
+</div>
+
+<!-- PSNR and Loss curves -->
+<p style="margin-top: 30px; text-align: center;">
+  Below (left) shows the Validation PSNR curve during training.  
+  The loss curve (right) decreases rapidly at the beginning and stabilizes later.
+</p>
+
+<div style="display: flex; justify-content: center; gap: 30px; margin-top: 10px;">
+  <div style="text-align: center;">
+    <img src="bottlepsnr.png" width="400">
+    <p style="margin-top: 6px;">Validation PSNR Curve</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="bottleloss.png" width="400">
+    <p style="margin-top: 6px;">Training Loss Curve</p>
+  </div>
+</div>
+
+<!-- Final GIF result -->
+<div style="text-align: center; margin-top: 40px;">
+  <img src="bottle.gif" width="480">
+  <p style="margin-top: 6px;">Final Rendering (Orbit View)</p>
 </div>
 
    
