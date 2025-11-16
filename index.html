@@ -249,7 +249,12 @@ $$
     <li>Coordinates are normalized to [0, 1]: (x/W, y/H).</li>
     <li>The corresponding RGB values are retrieved for supervision.</li>
   </ul>
-
+  <h2 style="margin-top: 40px;">Training Results</h2>
+<p style="margin-top: 15px; line-height: 1.6;">
+  I trained the network for 2000 iterations for each image. In the beginning, the model only captures a rough outline of the fox.
+  As the number of iterations increases, the reconstruction becomes clearer and starts to recover more fine-grained details.
+  Eventually, the network produces a result that closely matches the original image.
+</p>
   <!-- =========================== -->
   <!-- Image row (4 images) -->
   <!-- =========================== -->
@@ -633,27 +638,27 @@ $$
 <!-- Five intermediate training images -->
 <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
   <div style="text-align: center;">
-    <img src="bottle1000.png" width="260">
+    <img src="bottle1000.png" width="220">
     <p style="margin-top: 6px;">Iteration 1000</p>
   </div>
 
   <div style="text-align: center;">
-    <img src="bottle2000.png" width="260">
+    <img src="bottle2000.png" width="220">
     <p style="margin-top: 6px;">Iteration 2000</p>
   </div>
 
   <div style="text-align: center;">
-    <img src="bottle3000.png" width="260">
+    <img src="bottle3000.png" width="220">
     <p style="margin-top: 6px;">Iteration 3000</p>
   </div>
 
   <div style="text-align: center;">
-    <img src="bottle4000.png" width="260">
+    <img src="bottle4000.png" width="220">
     <p style="margin-top: 6px;">Iteration 4000</p>
   </div>
 
   <div style="text-align: center;">
-    <img src="bottle5000.png" width="260">
+    <img src="bottle5000.png" width="220">
     <p style="margin-top: 6px;">Iteration 5000 (Final)</p>
   </div>
 </div>
@@ -666,7 +671,7 @@ $$
 
 <div style="display: flex; justify-content: center; gap: 30px; margin-top: 10px;">
   <div style="text-align: center;">
-    <img src="bottlepsnr.png" width="400">
+    <img src="bottlepsnr.png" width="300">
     <p style="margin-top: 6px;">Validation PSNR Curve</p>
   </div>
 
